@@ -35,16 +35,14 @@ import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * TODO: Class level comments
+ * Handle the Http connection
  */
 public class ConnectionHandler {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
@@ -52,6 +50,7 @@ public class ConnectionHandler {
 
     /**
      * send the authentication request data to the IS analytics and obtain the risk score
+     *
      * @param context   Authentication context
      * @param timestamp timestamp of the authentication request
      * @return
@@ -97,7 +96,6 @@ public class ConnectionHandler {
             input = new StringEntity(requestBody);
         } catch (UnsupportedEncodingException e) {
             log.error("Failed to initialize the body of the http request" + e.getMessage(), e);
-            e.printStackTrace();
         }
         input.setContentType("application/json");
         httpPost.setEntity(input);
@@ -125,7 +123,7 @@ public class ConnectionHandler {
                     RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
                     riskscore = riskScoreDTO.getScore();
                 } catch (IOException e) {
-                    log.error("Failed to obtain risk score from http response. "+ e.getMessage());
+                    log.error("Failed to obtain risk score from http response. " + e.getMessage());
                 }
             }
         } else {
