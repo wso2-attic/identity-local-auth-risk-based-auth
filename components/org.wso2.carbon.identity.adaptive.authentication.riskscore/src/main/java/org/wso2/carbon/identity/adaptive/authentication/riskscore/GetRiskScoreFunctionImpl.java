@@ -21,8 +21,6 @@ package org.wso2.carbon.identity.adaptive.authentication.riskscore;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.ConnectionHandler;
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
 
-import java.io.IOException;
-
 /**
  * Implementation of the javascript function to obtain risk score of the authentication requests
  */
@@ -31,7 +29,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     public int getRiskScore(JsAuthenticationContext context, String timestamp) {
 
         ConnectionHandler handler = new ConnectionHandler();
-        int riskscore = handler.calculateRiskScore(context.getWrapped(),timestamp);
+        int riskscore = handler.calculateRiskScore(context.getWrapped(), timestamp, "202.176.254.62");
         return riskscore;
     }
 }

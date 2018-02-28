@@ -15,114 +15,181 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.wso2.carbon.identity.adaptive.authentication.riskscore;
 
-import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Matchers;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.ConnectionHandler;
-import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.RiskScoreConstants;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 
 /**
- * TODO: Class level comments
+ * Tests the connection with the IS Analytics and the risk scores
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SSLContexts.class})
 public class ConnectionHandlerTest {
-    private static final String RESPONSE_AS_STRING = "ResponseAsString";
-    private final static String URL = RiskScoreConstants.URL;
-    private final static String CONTENT_TYPE = "application/json";
-    private final static String ENTITY = "{}";
+    private static final Log log = LogFactory.getLog(ConnectionHandler.class);
 
-    @Mock
-    private HttpClient mockHttpClient;
-
-    @Mock
-    private HttpConnectionManager mockConnectionManager;
-
-    @Mock
-    private HttpPost mockRequest;
-
-    private HttpResponse mockResponse;
-
-    @Mock
     private ConnectionHandler connectionHandler;
-
-    @Mock
-    private AuthenticationContext context;
-
     private String timestamp;
 
-    @BeforeMethod
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(SSLContexts.class);
+    @BeforeClass
+    public void setup() {
 
+    }
+
+    //auth request which satisfies all the 3 rules
+    @Test
+    public void testCalculateRiskScore1() {
+        log.info("Sending an authentication request satisfying 3 risk score rules ");
+        connectionHandler = new ConnectionHandler();
+        AuthenticationContext context = mock(AuthenticationContext.class);
         AuthenticatedUser user = mock(AuthenticatedUser.class);
-        timestamp = String.valueOf(System.currentTimeMillis());
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("aofhbnf");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = "1513580856472";
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "202.176.254.62"), 0);
+    }
 
+    // normal random request ( violates geolocation
+    @Test
+    public void testCalculateRiskScore2() {
+        log.info("Sending an authentication request violating geolocation ");
+        connectionHandler = new ConnectionHandler();
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
         when(context.getSubject()).thenReturn(user);
         when(user.getUserName()).thenReturn("pamoda");
         when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
         when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = String.valueOf(System.currentTimeMillis());
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), 1);
+    }
+
+    //violates ip range
+    @Test
+    public void testCalculateRiskScore3() {
+        log.info("Sending an authentication request violating ip range ");
+        connectionHandler = new ConnectionHandler();
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("aofhbnf");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = "1513580856472";
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "12.176.254.62"), 1);
+    }
+
+
+    //violates time range
+    @Test
+    public void testCalculateRiskScore4() {
+        log.info("Sending an authentication request violating time range ");
+        connectionHandler = new ConnectionHandler();
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("aofhbnf");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = "1514844324000";
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "202.176.254.62"), 1);
+    }
+
+
+    // violates all the 3 rules
+    @Test
+    public void testCalculateRiskScore5() {
+        log.info("Sending an authentication request violating 3 risk score rules ");
+        connectionHandler = new ConnectionHandler();
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("aofhbnf");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = "1519855524000";
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "02.176.254.62"), 3);
+    }
+
+    @Test
+    public void testResponseError() throws IOException {
+        log.info("Testing response error code");
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("pamoda");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = String.valueOf(System.currentTimeMillis());
+
+        HttpClient mockHttpClient = mock(HttpClient.class);
+        HttpResponse mockHttpResponse = mock(HttpResponse.class);
+        HttpPost mockHttpPost = mock(HttpPost.class);
+        StatusLine mockStatusLine = mock(StatusLine.class);
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
+        when(mockStatusLine.getStatusCode()).thenReturn(404);
+        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
+        connectionHandler = new ConnectionHandler(mockHttpClient, mockHttpPost);
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
+    }
+
+    @Test
+    public void testResponseDelay() throws IOException {
+        log.info("Testing response delay");
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("pamoda");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = String.valueOf(System.currentTimeMillis());
+
+        HttpClient mockHttpClient = mock(HttpClient.class);
+        HttpPost mockHttpPost = mock(HttpPost.class);
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new SocketTimeoutException());
+        connectionHandler = new ConnectionHandler(mockHttpClient, mockHttpPost);
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
 
     }
 
     @Test
-    public void testCalculateRiskScore() {
-        connectionHandler.calculateRiskScore(context, timestamp);
-    }
+    public void testConnectionError() throws IOException {
+        log.info("Testing connection failure");
+        AuthenticationContext context = mock(AuthenticationContext.class);
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(context.getSubject()).thenReturn(user);
+        when(user.getUserName()).thenReturn("pamoda");
+        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
+        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
+        timestamp = String.valueOf(System.currentTimeMillis());
 
-    @Test
-    public void testHttpClientBuilder() throws KeyStoreException, NoSuchAlgorithmException {
+        HttpClient mockHttpClient = mock(HttpClient.class);
+        HttpPost mockHttpPost = mock(HttpPost.class);
 
-        SSLContextBuilder sslContextBuilder = mock(SSLContextBuilder.class);
-        when(sslContextBuilder.loadTrustMaterial(isNull(KeyStore.class), any(TrustSelfSignedStrategy.class)))
-                .thenThrow(new NoSuchAlgorithmException());
-
-        when(SSLContexts.custom()).thenReturn(sslContextBuilder);
-
-        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp), -1);
-    }
-
-    @Test
-    public void testRequestBodyInitiation() {
-
-    }
-
-    @Test
-    public void testNullResponse() {
-
-    }
-
-    @Test
-    public void testResponseError() {
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
+        connectionHandler = new ConnectionHandler(mockHttpClient, mockHttpPost);
+        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
 
     }
 
