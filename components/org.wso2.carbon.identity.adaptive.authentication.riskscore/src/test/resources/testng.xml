@@ -18,7 +18,7 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Identity-connector-password-policy-test-suite">
+<suite name="Adapative-Authenticator-test-suite">
     <test name="adaptive-authenticator" parallel="false">
         <classes>
             <class name="org.wso2.carbon.identity.adaptive.authentication.riskscore.ConnectionHandlerTest"/>
