@@ -33,6 +33,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.wso2.carbon.identity.adaptive.authentication.riskscore.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class ConnectionHandler {
                     .setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null,
                             new TrustSelfSignedStrategy()).build())).build();
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-            log.error("Could not establish a secure connection " + e.getMessage(), e);
+            log.error("Failed to establish a secure connection. " + e.getMessage(), e);
         }
         httpResponse = null;
         RequestConfig requestConfig = RequestConfig.custom()
@@ -73,38 +74,22 @@ public class ConnectionHandler {
 
     }
 
-    public ConnectionHandler(HttpClient client, HttpPost post) {
-        connectionManager = new BasicHttpClientConnectionManager();
-        httpClient = client;
-        httpResponse = null;
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(1000)
-                .setConnectTimeout(1000)
-                .setConnectionRequestTimeout(1000)
-                .build();
-        httpPost = post;
-        httpPost.setConfig(requestConfig);
-        httpPost.setHeader("Content-type", "application/json");
-
-
-    }
-
     /**
      * send the authentication request data to the IS analytics and obtain the risk score
      *
      * @param context   Authentication context
      * @param timestamp timestamp of the authentication request
-     * @return
+     * @return riskScore riskScore value for the authentication request
      */
-    public int calculateRiskScore(AuthenticationContext context, String timestamp, String remoteIp) {
+    public int calculateRiskScore(AuthenticationContext context, String timestamp, String remoteIp) throws
+            RiskScoreCalculationException {
 
         String username = context.getSubject().getUserName();
         String userStoreDomain = context.getSubject().getUserStoreDomain();
         String tenantDomain = context.getSubject().getTenantDomain();
 
 //        String timestamp = String.valueOf(System.currentTimeMillis());
-        int riskscore = -1;
-        Boolean success = false;
+        int riskScore = -1;
 
         //define the request body of the rest API call
         String requestBody = "{" +
@@ -117,41 +102,34 @@ public class ConnectionHandler {
         StringEntity input = null;
         try {
             input = new StringEntity(requestBody);
+            input.setContentType("application/json");
+            httpPost.setEntity(input);
         } catch (UnsupportedEncodingException e) {
-            log.error("Failed to initialize the body of the http request" + e.getMessage(), e);
+            throw new RiskScoreCalculationException("Failed to initialize http request body. ", e, riskScore);
         }
-        input.setContentType("application/json");
-        httpPost.setEntity(input);
 
         //execute the API call and obtain the result
         try {
             httpResponse = httpClient.execute(httpPost);
-            success = true;
         } catch (IOException e) {
-            log.error("Could not get the risk score from the server. " + e.getMessage());
+            throw new RiskScoreCalculationException("Failed to connect with the server. ", e, riskScore);
+//            log.error("Could not get the risk score from the server. " + e.getMessage());
         } finally {
             connectionManager.shutdown();
         }
-
-        if (success) {
-            if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                log.error("Failed : HTTP error code : " + httpResponse.getStatusLine().getStatusCode());
-                log.warn("Could not calculate risk score. Proceeding the authentication flow as high risk");
-            } else {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    String responseString = EntityUtils.toString(httpResponse.getEntity());
-                    RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
-                    riskscore = riskScoreDTO.getScore();
-                } catch (IOException e) {
-                    log.error("Failed to obtain risk score from http response. " + e.getMessage());
-                }
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                String responseString = EntityUtils.toString(httpResponse.getEntity());
+                RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
+                riskScore = riskScoreDTO.getScore();
+            } catch (IOException e) {
+                throw new RiskScoreCalculationException("Failed to get risk score from reponse. ", e, riskScore);
             }
         } else {
-            log.warn("Could not calculate risk score. Proceeding the authentication flow as high risk");
+            throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode() , riskScore);
         }
-        return riskscore;
-
+        return riskScore;
     }
 
 }
