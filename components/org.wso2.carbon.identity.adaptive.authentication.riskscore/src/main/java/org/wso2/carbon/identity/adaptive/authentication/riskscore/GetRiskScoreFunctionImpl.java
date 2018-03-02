@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.ConnectionHandler;
+import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
 
 /**
@@ -32,12 +33,13 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     @Override
     public int getRiskScore(JsAuthenticationContext context, String timestamp) {
 
+        RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped());
         ConnectionHandler handler = new ConnectionHandler();
         int riskScore;
         try {
-            riskScore = handler.calculateRiskScore(context.getWrapped(), timestamp, "202.176.254.62");
+            riskScore = handler.calculateRiskScore(requestDTO);
         } catch (RiskScoreCalculationException e) {
-            log.warn("Could not calculate risk score. " + e.getMessage());
+            log.warn("Could not calculate risk score." + e.getMessage());
             riskScore = e.getRiskScore();
         }
         return riskScore;

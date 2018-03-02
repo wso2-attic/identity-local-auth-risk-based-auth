@@ -18,6 +18,7 @@
 package org.wso2.carbon.identity.adaptive.authentication.riskscore.util;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +35,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.exception.RiskScoreCalculationException;
-import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,34 +77,22 @@ public class ConnectionHandler {
     /**
      * send the authentication request data to the IS analytics and obtain the risk score
      *
-     * @param context   Authentication context
-     * @param timestamp timestamp of the authentication request
+     * @param requestDTO Authentication context
      * @return riskScore riskScore value for the authentication request
      */
-    public int calculateRiskScore(AuthenticationContext context, String timestamp, String remoteIp) throws
+    public int calculateRiskScore(RiskScoreRequestDTO requestDTO) throws
             RiskScoreCalculationException {
 
-        String username = context.getSubject().getUserName();
-        String userStoreDomain = context.getSubject().getUserStoreDomain();
-        String tenantDomain = context.getSubject().getTenantDomain();
-
-//        String timestamp = String.valueOf(System.currentTimeMillis());
+        ObjectMapper mapper = new ObjectMapper();
         int riskScore = -1;
 
-        //define the request body of the rest API call
-        String requestBody = "{" +
-                "\"username\": \"" + username + "\"," +
-                "\"userStoreDomain\": \"" + userStoreDomain + "\"," +
-                "\"tenantDomain\": \"" + tenantDomain + "\"," +
-                "\"remoteIp\": \"" + remoteIp + "\"," +
-                "\"timestamp\": \"" + timestamp + "\"}";
-
-        StringEntity input = null;
         try {
-            input = new StringEntity(requestBody);
-            input.setContentType("application/json");
-            httpPost.setEntity(input);
-        } catch (UnsupportedEncodingException e) {
+            String requestBodyInString = mapper.writeValueAsString(requestDTO);
+            StringEntity requestBody = new StringEntity(requestBodyInString);
+            requestBody.setContentType("application/json");
+            httpPost.setEntity(requestBody);
+
+        } catch (JsonProcessingException | UnsupportedEncodingException e) {
             throw new RiskScoreCalculationException("Failed to initialize http request body. ", e, riskScore);
         }
 
@@ -113,21 +101,21 @@ public class ConnectionHandler {
             httpResponse = httpClient.execute(httpPost);
         } catch (IOException e) {
             throw new RiskScoreCalculationException("Failed to connect with the server. ", e, riskScore);
-//            log.error("Could not get the risk score from the server. " + e.getMessage());
         } finally {
             connectionManager.shutdown();
         }
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
-            ObjectMapper mapper = new ObjectMapper();
+
             try {
                 String responseString = EntityUtils.toString(httpResponse.getEntity());
                 RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
                 riskScore = riskScoreDTO.getScore();
             } catch (IOException e) {
-                throw new RiskScoreCalculationException("Failed to get risk score from reponse. ", e, riskScore);
+                throw new RiskScoreCalculationException("Failed to get risk score from response. ", e, riskScore);
             }
         } else {
-            throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode() , riskScore);
+            throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode
+                    (), riskScore);
         }
         return riskScore;
     }
