@@ -27,5 +27,5 @@ import java.io.IOException;
  */
 @FunctionalInterface
 public interface GetRiskScoreFunction {
-    int getRiskScore(JsAuthenticationContext context, String name) throws IOException;
+    int getRiskScore(JsAuthenticationContext context) throws IOException;
 }

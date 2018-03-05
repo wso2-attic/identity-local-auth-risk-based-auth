@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.ConnectionHandler;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.RiskScoreConstants;
+import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 
@@ -136,13 +137,7 @@ public class ConnectionHandlerTest {
     @Test (expectedExceptions = RiskScoreCalculationException.class)
     public void testResponseError() throws Exception {
         log.info("Testing response error code");
-        AuthenticationContext context = mock(AuthenticationContext.class);
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(context.getSubject()).thenReturn(user);
-        when(user.getUserName()).thenReturn("pamoda");
-        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
-        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
-        timestamp = String.valueOf(System.currentTimeMillis());
+        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
 
         HttpClient mockHttpClient = mock(HttpClient.class);
         HttpResponse mockHttpResponse = mock(HttpResponse.class);
@@ -154,40 +149,27 @@ public class ConnectionHandlerTest {
         when(mockStatusLine.getStatusCode()).thenReturn(404);
         when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
         connectionHandler = new ConnectionHandler();
-        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
+        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
     }
 
     @Test (expectedExceptions = RiskScoreCalculationException.class)
     public void testResponseDelay() throws Exception {
         log.info("Testing response delay");
-        AuthenticationContext context = mock(AuthenticationContext.class);
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(context.getSubject()).thenReturn(user);
-        when(user.getUserName()).thenReturn("pamoda");
-        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
-        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
-        timestamp = String.valueOf(System.currentTimeMillis());
-
+        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
         HttpClient mockHttpClient = mock(HttpClient.class);
         HttpPost mockHttpPost = mock(HttpPost.class);
         whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
 
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new SocketTimeoutException());
         connectionHandler = new ConnectionHandler();
-        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
+        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
 
     }
 
     @Test (expectedExceptions = RiskScoreCalculationException.class)
     public void testConnectionError() throws Exception {
         log.info("Testing connection failure");
-        AuthenticationContext context = mock(AuthenticationContext.class);
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(context.getSubject()).thenReturn(user);
-        when(user.getUserName()).thenReturn("pamoda");
-        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
-        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
-        timestamp = String.valueOf(System.currentTimeMillis());
+        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
 
         HttpClient mockHttpClient = mock(HttpClient.class);
         HttpPost mockHttpPost = mock(HttpPost.class);
@@ -195,8 +177,7 @@ public class ConnectionHandlerTest {
 
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
         connectionHandler = new ConnectionHandler();
-        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "203.43.1.43"), -1);
-
+        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
     }
 
 

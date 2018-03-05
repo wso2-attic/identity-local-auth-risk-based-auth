@@ -105,7 +105,6 @@ public class ConnectionHandler {
             connectionManager.shutdown();
         }
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
-
             try {
                 String responseString = EntityUtils.toString(httpResponse.getEntity());
                 RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);

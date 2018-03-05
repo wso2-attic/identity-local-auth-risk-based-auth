@@ -17,39 +17,52 @@
  */
 package org.wso2.carbon.identity.adaptive.authentication.riskscore;
 
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.testng.annotations.Test;
 import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.ConnectionHandler;
+import org.wso2.carbon.identity.adaptive.authentication.riskscore.util.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 /**
  * TODO: Class level comments
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(RiskScoreRequestDTO.class)
+//@PrepareForTest(RiskScoreRequestDTO.class)
 public class GetRiskScoreFunctionImplTest {
 
     @Test
-    public void testGetRiskScore() {
-        GetRiskScoreFunctionImpl mockFunctionImpl = mock(GetRiskScoreFunctionImpl.class);
-        JsAuthenticationContext jsContext = mock(JsAuthenticationContext.class);
-        AuthenticationContext context = mock(AuthenticationContext.class);
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        ConnectionHandler handler = mock(ConnectionHandler.class);
-//        when(jsContext.getWrapped()).thenReturn(context);
-//        when(context.getSubject()).thenReturn(user);
-//        when(user.getUserName()).thenReturn("aofhbnf");
-//        when(context.getSubject().getUserStoreDomain()).thenReturn("PRIMARY");
-//        when(context.getSubject().getTenantDomain()).thenReturn("carbon.super");
-//        String timestamp = "1513580856472";
-//        mockFunctionImpl.getRiskScore(jsContext, timestamp);
+    public void testGetRiskScore() throws Exception {
+//        GetRiskScoreFunctionImpl mockFunctionImpl = new GetRiskScoreFunctionImpl();
+//        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
+//        JsAuthenticationContext jsAuthenticationContext = mock(JsAuthenticationContext.class);
+////        AuthenticationContext authenticationContext = mock(AuthenticationContext.class);
+////        AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+////        when(authenticationContext.getSubject()).thenReturn(authenticatedUser);
+////        when(authenticatedUser.getUserName()).thenReturn("pamoda");
+////        when(authenticatedUser.getUserStoreDomain()).thenReturn("PRIMARY");
+////        when(authenticatedUser.getTenantDomain()).thenReturn("carbon.super");
 //
-//        Mockito.verify(handler, Mockito.times(1)).calculateRiskScore(Matchers.any(AuthenticationContext.class),
-//                Matchers.anyString(), Matchers.anyString());
+//        riskScoreRequestDTO.setUsername("pamoda");
+//        riskScoreRequestDTO.setUserStoreDomain("PRIMARY");
+//        riskScoreRequestDTO.setTenantDomain("carbon.super");
+//        riskScoreRequestDTO.setRemoteIp("123.54.43.2");
+//        riskScoreRequestDTO.setTimestamp(String.valueOf(System.currentTimeMillis()));
+//        ConnectionHandler handler = mock(ConnectionHandler.class);
+//        whenNew(RiskScoreRequestDTO.class).withArguments(Matchers.any(AuthenticationContext.class)).thenReturn(riskScoreRequestDTO);
+//
+//        mockFunctionImpl.getRiskScore(jsAuthenticationContext);
+//        Mockito.verify(handler, Mockito.times(1)).calculateRiskScore(riskScoreRequestDTO);
     }
 }

@@ -31,7 +31,7 @@ import org.wso2.carbon.identity.application.authentication.framework.config.mode
 public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     private static final Log log = LogFactory.getLog(GetRiskScoreFunctionImpl.class);
     @Override
-    public int getRiskScore(JsAuthenticationContext context, String timestamp) {
+    public int getRiskScore(JsAuthenticationContext context) {
 
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped());
         ConnectionHandler handler = new ConnectionHandler();
@@ -39,7 +39,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
         try {
             riskScore = handler.calculateRiskScore(requestDTO);
         } catch (RiskScoreCalculationException e) {
-            log.warn("Could not calculate risk score." + e.getMessage());
+            log.warn("Could not calculate risk score. " + e.getMessage());
             riskScore = e.getRiskScore();
         }
         return riskScore;

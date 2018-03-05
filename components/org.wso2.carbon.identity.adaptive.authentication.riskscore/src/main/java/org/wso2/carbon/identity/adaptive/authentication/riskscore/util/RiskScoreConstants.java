@@ -21,6 +21,6 @@ package org.wso2.carbon.identity.adaptive.authentication.riskscore.util;
  * Contains the constants required for the Adaptive Authentication
  */
 public class RiskScoreConstants {
-    public static final String URL = "https://localhost:9444/riskscore/getRiskScore";
+    public static final String URL = "https://localhost:9444/api/authentication/adaptive/risk/calculate";
 
 }
