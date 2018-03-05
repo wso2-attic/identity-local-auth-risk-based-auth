@@ -39,7 +39,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
         try {
             riskScore = handler.calculateRiskScore(requestDTO);
         } catch (RiskScoreCalculationException e) {
-            log.warn("Could not calculate risk score. " + e.getMessage());
+            log.warn("Could not calculate risk score. " + e.getMessage(), e);
             riskScore = e.getRiskScore();
         }
         return riskScore;
