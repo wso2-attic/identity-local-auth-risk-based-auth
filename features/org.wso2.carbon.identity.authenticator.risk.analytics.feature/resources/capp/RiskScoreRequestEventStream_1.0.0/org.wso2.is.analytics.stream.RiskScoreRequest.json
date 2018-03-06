@@ -1,0 +1,33 @@
+
+{
+  "name": "org.wso2.is.analytics.stream.RiskScoreRequest",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "eventId",
+      "type": "STRING"
+    },
+    {
+      "name": "username",
+      "type": "STRING"
+    },
+    {
+      "name": "userStoreDomain",
+      "type": "STRING"
+    },
+    {
+      "name": "tenantDomain",
+      "type": "STRING"
+    },
+    {
+      "name": "remoteIp",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ]
+}
