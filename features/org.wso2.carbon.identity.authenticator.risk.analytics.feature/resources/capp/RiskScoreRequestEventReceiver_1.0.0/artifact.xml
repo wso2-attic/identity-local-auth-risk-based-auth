@@ -18,5 +18,5 @@
   -->
 
 <artifact name="RiskScoreRequestEventReceiver" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
-    <file>IsAnalytics-Receiver-wso2event-AuthenticationData-RiskScoreRequestData.xml</file>
+    <file>IsAnalytics-Receiver-wso2event-RiskScoreRequestData.xml</file>
 </artifact>

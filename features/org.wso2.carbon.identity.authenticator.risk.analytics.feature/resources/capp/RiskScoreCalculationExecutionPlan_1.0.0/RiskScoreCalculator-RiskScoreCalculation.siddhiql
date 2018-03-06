@@ -2,7 +2,7 @@
 @Plan:name('RiskScoreCalculator-RiskScoreCalculation')
 
 /* Enter a unique description for ExecutionPlan */
-@Plan:description('Aggregate all the rule violations to a riskscore value')
+@Plan:description('Aggregate all the rule violations to a single score')
 
 /* define streams/tables and write queries here ... */
 

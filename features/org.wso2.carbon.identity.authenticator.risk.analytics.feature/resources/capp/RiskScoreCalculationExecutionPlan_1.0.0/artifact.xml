@@ -17,7 +17,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<artifact name="IsAnalytics-ExecutionPlan-SessionInfo" version="1.0.0" type="event/execution-plan"
+<artifact name="RiskScoreCalculator-RiskScoreCalculation" version="1.0.0" type="event/execution-plan"
           serverRole="ComplexEventProcessor">
     <file>RiskScoreCalculator-RiskScoreCalculation.siddhiql</file>
 </artifact>

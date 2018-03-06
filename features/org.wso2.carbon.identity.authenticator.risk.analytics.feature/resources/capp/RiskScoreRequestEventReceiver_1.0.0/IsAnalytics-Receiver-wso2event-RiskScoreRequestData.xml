@@ -17,7 +17,13 @@
   ~ under the License.
   -->
 
-<artifact name="RiskScorePerRuleEventStream" version="1.0.0" type="event/stream"
-          serverRole="ComplexEventProcessor">
-    <file>org.wso2.is.analytics.stream.RiskScorePerRule.json</file>
-</artifact>
+<eventReceiver name="IsAnalytics-Receiver-wso2event-RiskScoreRequestData" statistics="disable"
+               trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
+    <from eventAdapterType="wso2event">
+        <property name="events.duplicated.in.cluster">false</property>
+    </from>
+    <mapping customMapping="disable" type="wso2event"/>
+    <to streamName="org.wso2.is.analytics.stream.RiskScoreRequest" version="1.0.0"/>
+
+</eventReceiver>
+
