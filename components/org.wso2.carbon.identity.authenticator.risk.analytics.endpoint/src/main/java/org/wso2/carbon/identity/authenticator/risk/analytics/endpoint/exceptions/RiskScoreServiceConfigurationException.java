@@ -15,13 +15,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.authenticator.risk.util;
 
-/**
- * Contains the constants required for the Adaptive Authentication
- */
-public class RiskScoreConstants {
-    public static final String URL = "https://localhost:9444/api/authentication/adaptive/risk/calculate";
-    public static final int DEFAULT_RISK_SCORE = 2;
+package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exceptions;
+
+public class RiskScoreServiceConfigurationException extends Exception {
+
+    public RiskScoreServiceConfigurationException() {
+    }
+
+    public RiskScoreServiceConfigurationException(String message) {
+        super(message);
+    }
+
+    public RiskScoreServiceConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RiskScoreServiceConfigurationException(Throwable cause) {
+        super(cause);
+    }
 
 }

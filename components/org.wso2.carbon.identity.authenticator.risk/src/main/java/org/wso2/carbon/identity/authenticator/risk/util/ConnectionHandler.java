@@ -84,7 +84,7 @@ public class ConnectionHandler {
             RiskScoreCalculationException {
 
         ObjectMapper mapper = new ObjectMapper();
-        int riskScore = -1;
+        int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
 
         try {
             String requestBodyInString = mapper.writeValueAsString(requestDTO);

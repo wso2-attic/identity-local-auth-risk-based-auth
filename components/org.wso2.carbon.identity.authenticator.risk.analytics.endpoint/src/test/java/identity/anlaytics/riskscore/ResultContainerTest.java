@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) {2018}, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,13 +15,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.authenticator.risk.util;
+package identity.anlaytics.riskscore;
 
 /**
- * Contains the constants required for the Adaptive Authentication
+ * TODO: Class level comments
  */
-public class RiskScoreConstants {
-    public static final String URL = "https://localhost:9444/api/authentication/adaptive/risk/calculate";
-    public static final int DEFAULT_RISK_SCORE = 2;
-
+public class ResultContainerTest {
 }

@@ -130,7 +130,7 @@ public class ConnectionHandlerTest {
 //        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "02.176.254.62"), 3);
 //    }
 
-    @Test (expectedExceptions = RiskScoreCalculationException.class)
+    @Test(expectedExceptions = RiskScoreCalculationException.class)
     public void testResponseError() throws Exception {
         log.info("Testing response error code");
         RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
@@ -148,7 +148,7 @@ public class ConnectionHandlerTest {
         connectionHandler.calculateRiskScore(riskScoreRequestDTO);
     }
 
-    @Test (expectedExceptions = RiskScoreCalculationException.class)
+    @Test(expectedExceptions = RiskScoreCalculationException.class)
     public void testResponseDelay() throws Exception {
         log.info("Testing response delay");
         RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
@@ -162,7 +162,7 @@ public class ConnectionHandlerTest {
 
     }
 
-    @Test (expectedExceptions = RiskScoreCalculationException.class)
+    @Test(expectedExceptions = RiskScoreCalculationException.class)
     public void testConnectionError() throws Exception {
         log.info("Testing connection failure");
         RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);

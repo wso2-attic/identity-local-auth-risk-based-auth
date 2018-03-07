@@ -24,9 +24,9 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.wso2.carbon.identity.application.authentication.framework.JsFunctionRegistry;
 import org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunction;
 import org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunctionImpl;
-import org.wso2.carbon.identity.application.authentication.framework.JsFunctionRegistry;
 
 /**
  * TODO: Class level comments

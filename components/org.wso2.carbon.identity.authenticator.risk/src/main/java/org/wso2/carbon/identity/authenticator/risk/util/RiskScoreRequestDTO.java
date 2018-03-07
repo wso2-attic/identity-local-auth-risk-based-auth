@@ -20,8 +20,6 @@ package org.wso2.carbon.identity.authenticator.risk.util;
 import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 
-import java.util.Map;
-
 /**
  * Contains java object for risk score request
  */

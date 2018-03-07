@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.identity.authenticator.risk</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Risk Calculator </name>
+    <name>WSO2 Carbon - Risk Calculator</name>
     <build>
         <plugins>
             <plugin>

@@ -32,7 +32,7 @@
     <artifactId>identity-local-auth-risk</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>WSO2 Carbon - Risk Calculator for Authentication Request </name>
+    <name>WSO2 Carbon - Risk Calculator for Authentication Request</name>
     <url>http://wso2.org</url>
 
 
@@ -202,6 +202,21 @@
                 <version>${com.fasterxml.jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${codehaus.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${codehaus.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+                <version>${codehaus.jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${org.apache.httpcomponents.version}</version>
@@ -245,16 +260,67 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.stream.core</artifactId>
+                <scope>provided</scope>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.commons</artifactId>
+                <scope>provided</scope>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.agent</artifactId>
+                <scope>provided</scope>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <scope>provided</scope>
+                <version>4.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>1.5.8</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${org.apache.cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-client</artifactId>
+                <version>${org.apache.cxf.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>4.1.9.RELEASE</version>
+            </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>com.sun.jersey</groupId>-->
-                <!--<artifactId>jersey-server</artifactId>-->
-                <!--<version>${com.sun.jersey.version}</version>-->
+            <!--<groupId>com.sun.jersey</groupId>-->
+            <!--<artifactId>jersey-server</artifactId>-->
+            <!--<version>${com.sun.jersey.version}</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>com.sun.jersey</groupId>-->
-                <!--<artifactId>jersey-client</artifactId>-->
-                <!--<version>${com.sun.jersey.version}</version>-->
+            <!--<groupId>com.sun.jersey</groupId>-->
+            <!--<artifactId>jersey-client</artifactId>-->
+            <!--<version>${com.sun.jersey.version}</version>-->
             <!--</dependency>-->
 
         </dependencies>
@@ -337,18 +403,22 @@
 
     <properties>
         <version.equinox.osgi>3.9.1.v20130814-1242</version.equinox.osgi>
+        <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <carbon.kernel.version>4.4.23</carbon.kernel.version>
+        <carbon.analytics.common.version>5.0.8</carbon.analytics.common.version>
+        <identity.framework.version>5.11.64</identity.framework.version>
+        <carbon.identity.package.export.version>${project.version}</carbon.identity.package.export.version>
+
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
-        <identity.framework.version>5.11.64</identity.framework.version>
         <org.powermock.version>1.7.3</org.powermock.version>
+        <mockito.version>1.10.19</mockito.version>
         <testng.version>6.9.10</testng.version>
         <jacoco.version>0.7.9</jacoco.version>
         <jmockit.version>1.35</jmockit.version>
         <io.swagger.version>1.5.8</io.swagger.version>
         <cxf-version>2.7.13</cxf-version>
 
-        <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <apache.felix.scr.ds.annotations.version>1.2.8</apache.felix.scr.ds.annotations.version>
         <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
         <junit.version>4.11</junit.version>
@@ -356,8 +426,12 @@
         <log4j.version>1.2.13</log4j.version>
         <org.apache.httpcomponents.version>4.1.1</org.apache.httpcomponents.version>
         <com.fasterxml.jackson.version>2.6.0</com.fasterxml.jackson.version>
-        <mockito.version>1.10.19</mockito.version>
+        <codehaus.jackson.version>1.8.6</codehaus.jackson.version>
+        <!--<jackson.version>1.8.6</jackson.version>-->
+        <org.apache.cxf.version>3.1.6</org.apache.cxf.version>
 
+        <maven.scr.plugin.version>1.24.0</maven.scr.plugin.version>
+        <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
 
         <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
         <!--&lt;!&ndash; Carbon kernel version &ndash;&gt;-->
@@ -374,7 +448,6 @@
         <!--<carbon.commons.imp.pkg.version>[4.4.0, 5.0.0)</carbon.commons.imp.pkg.version>-->
 
         <!--&lt;!&ndash;Carbon identity version&ndash;&gt;-->
-        <carbon.identity.package.export.version>${project.version}</carbon.identity.package.export.version>
         <!--<carbon.identity.package.import.version.range>[5.0.0, 6.0.0)</carbon.identity.package.import.version.range>-->
 
         <!--&lt;!&ndash;Carbon registry version&ndash;&gt;-->
@@ -557,7 +630,6 @@
         <!--<apache.wink.version>1.1.3-incubating</apache.wink.version>-->
         <!--<openspml.version>192-20100413</openspml.version>-->
         <!--<powermock.version>1.6.6</powermock.version>-->
-        <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
         <!--<thetransactioncompany.cors-filter.wso2.version>1.7.0.wso2v1</thetransactioncompany.cors-filter.wso2.version>-->
         <!--<thetransactioncompany.utils.wso2.version>1.9.0.wso2v1</thetransactioncompany.utils.wso2.version>-->
         <!--<jsr311-api.version>1.1.1</jsr311-api.version>-->
@@ -580,7 +652,6 @@
 
 
         <!--<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>-->
-        <maven.scr.plugin.version>1.24.0</maven.scr.plugin.version>
 
         <!--<project.scm.id>my-scm-server</project.scm.id>-->
 
@@ -588,7 +659,6 @@
 
         <!--&lt;!&ndash; Unit test versions &ndash;&gt;-->
         <!--<testng.version>6.9.10</testng.version>-->
-        <!--<jacoco.version>0.7.9</jacoco.version>-->
         <!--<maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>-->
         <!--<slf4j.api.version>1.7.12</slf4j.api.version>-->
 
