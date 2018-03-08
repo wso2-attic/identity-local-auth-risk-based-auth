@@ -25,6 +25,6 @@
     <username>admin</username>
     <password>admin</password>
     <authenticationStream>org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0</authenticationStream>
-    <riskScoreStream>org.wso2.is.analytics.stream.RiskScore:1.0.0</riskScoreStream>
+    <riskScoreStream>org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0</riskScoreStream>
 </CEPConfig>
 
