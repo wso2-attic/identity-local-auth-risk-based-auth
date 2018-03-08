@@ -41,6 +41,7 @@
         <module>features/org.wso2.carbon.identity.authenticator.risk.analytics.feature</module>
         <module>components/org.wso2.carbon.identity.authenticator.risk.analytics.endpoint</module>
         <module>components/org.wso2.carbon.identity.authenticator.risk.analytics</module>
+
     </modules>
 
     <repositories>
@@ -286,6 +287,12 @@
                 <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.event.template.manager.admin</artifactId>
+                <scope>provided</scope>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.utils</artifactId>
                 <scope>provided</scope>
@@ -325,23 +332,6 @@
                 <artifactId>siddhi-core</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.event.template.manager.admin</artifactId>
-                <version>${carbon.analytics.common.template.versrion}</version>
-            </dependency>
-
-
-            <!--<dependency>-->
-            <!--<groupId>com.sun.jersey</groupId>-->
-            <!--<artifactId>jersey-server</artifactId>-->
-            <!--<version>${com.sun.jersey.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>com.sun.jersey</groupId>-->
-            <!--<artifactId>jersey-client</artifactId>-->
-            <!--<version>${com.sun.jersey.version}</version>-->
-            <!--</dependency>-->
 
         </dependencies>
     </dependencyManagement>
@@ -425,11 +415,9 @@
         <version.equinox.osgi>3.9.1.v20130814-1242</version.equinox.osgi>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <carbon.kernel.version>4.4.23</carbon.kernel.version>
-        <carbon.analytics.common.version>5.0.8</carbon.analytics.common.version>
-        <carbon.analytics.common.template.versrion>5.1.7</carbon.analytics.common.template.versrion>
+        <carbon.analytics.common.version>5.1.7</carbon.analytics.common.version>
         <identity.framework.version>5.11.64</identity.framework.version>
         <carbon.identity.package.export.version>${project.version}</carbon.identity.package.export.version>
-
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <org.powermock.version>1.7.3</org.powermock.version>
