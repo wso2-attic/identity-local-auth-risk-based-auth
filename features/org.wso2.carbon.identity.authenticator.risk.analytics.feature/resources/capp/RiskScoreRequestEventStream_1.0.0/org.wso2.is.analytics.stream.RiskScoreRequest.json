@@ -27,6 +27,38 @@
     {
       "name": "timestamp",
       "type": "LONG"
+    },
+    {
+      "name": "inboundAuthType",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "rememberMeEnabled",
+      "type": "BOOL"
+    },
+    {
+      "name": "forceAuthEnabled",
+      "type": "BOOL"
+    },
+    {
+      "name": "passiveAuthEnabled",
+      "type": "BOOL"
+    },
+    {
+      "name": "identityProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "stepAuthenticator",
+      "type": "STRING"
+    },
+    {
+      "name": "propertyMap",
+      "type": "STRING"
     }
   ]
 }
