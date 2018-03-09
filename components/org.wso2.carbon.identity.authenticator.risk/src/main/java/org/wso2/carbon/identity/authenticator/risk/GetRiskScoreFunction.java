@@ -19,13 +19,16 @@
 package org.wso2.carbon.identity.authenticator.risk;
 
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
+import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsParameters;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
- * TODO: Class level comments
+ * Functional interface of GetRiskScoreFunction
  */
 @FunctionalInterface
 public interface GetRiskScoreFunction {
-    int getRiskScore(JsAuthenticationContext context) throws IOException;
+    int getRiskScore(JsAuthenticationContext context, Map<String, String> propertyMap) throws IOException;
 }

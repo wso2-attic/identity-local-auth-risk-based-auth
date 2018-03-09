@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.authenticator.risk.util;
+package org.wso2.carbon.identity.authenticator.risk;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +35,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

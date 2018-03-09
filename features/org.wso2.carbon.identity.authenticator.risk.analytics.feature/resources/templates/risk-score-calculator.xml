@@ -1,24 +1,24 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+﻿﻿<?xml version="1.0" encoding="UTF-8"?>
+        <!--
+          ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+          ~
+          ~ Licensed under the Apache License, Version 2.0 (the "License");
+          ~ you may not use this file except in compliance with the License.
+          ~ You may obtain a copy of the License at
+          ~
+          ~     http://www.apache.org/licenses/LICENSE-2.0
+          ~
+          ~ Unless required by applicable law or agreed to in writing, software
+          ~ distributed under the License is distributed on an "AS IS" BASIS,
+          ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+          ~ See the License for the specific language governing permissions and
+          ~ limitations under the License.
+          -->
 <domain name="RiskScoreCalculator">
-    <description>Calculate a risk score for an authentication request</description>
+    <description>Analyse the risk of authentication requests</description>
     <scenarios>
-        <scenario type="DifferentLocation">
-            <description>Calculate the risk score based on the login location</description>
+        <scenario type="ConfigureLocationBasedRiskRule">
+            <description>Configure the number of days to be considered when idenitfying the user's usual login location </description>
             <templates>
                 <template type="realtime">
                     <![CDATA[
@@ -59,98 +59,98 @@
                     on e1.eventId == e2.eventId
                     select e1.eventId as eventId, ifThenElse( (e1.region == "NOT_AVAILABLE" OR e1.username is null OR e1.userStoreDomain is null OR e1.tenantDomain is null), 2, ifThenElse(e2 is null, 0, 1) ) as riskscore
                     insert into RiskScorePerRule;
-	    	
+
 ]]>
                 </template>
             </templates>
             <parameters>
                 <parameter name="numberOfDays" type="int">
                     <displayName>Number of days</displayName>
-                    <description>Number of days to be considered when identifying different login location</description>
+                    <description>Number of days to be considered</description>
                     <defaultValue>30</defaultValue>
                 </parameter>
             </parameters>
         </scenario>
 
-        <scenario type="AllowedTimePeriod">
-            <description>Calculate the risk score based on the time of login</description>
+        <scenario type="ConfigureTimeBasedRiskRule">
+            <description>Configure the time period when authentication requests are accepted without a risk</description>
             <templates>
                 <template type="realtime">
                     <![CDATA[
-/* Enter a unique ExecutionPlan */
+                    /* Enter a unique ExecutionPlan */
 
-@Plan:name('RiskScoreCalculator-RiskViolationRule-AllowedTimeRange')
+                    @Plan:name('RiskScoreCalculator-RiskViolationRule-AllowedTimeRange')
 
-/* Enter a unique description for ExecutionPlan */
-@Plan:description('Detect login that occur not in the allowed time')
+                    /* Enter a unique description for ExecutionPlan */
+                    @Plan:description('Detect login that occur not in the allowed time')
 
-/* define streams/tables and write queries here ... */
-@Import('org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0')
-define stream RiskScoreRequest (eventId string, username string, userStoreDomain string, tenantDomain string, remoteIp string, timestamp long);
+                    /* define streams/tables and write queries here ... */
+                    @Import('org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0')
+                    define stream RiskScoreRequest (eventId string, username string, userStoreDomain string, tenantDomain string, remoteIp string, timestamp long);
 
-@Export('org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0')
-define stream RiskScorePerRule (eventId string, riskscore int);
+                    @Export('org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0')
+                    define stream RiskScorePerRule (eventId string, riskscore int);
 
-from RiskScoreRequest
-select eventId, ifThenElse( (time:extract(timestamp,'HOUR') < $allowedTimeStart OR time:extract(timestamp,'HOUR') > $allowedTimeEnd), 1, 0 ) as riskscore
-insert into RiskScorePerRule;
+                    from RiskScoreRequest
+                    select eventId, ifThenElse( (time:extract(timestamp,'HOUR') < $allowedTimeStart OR time:extract(timestamp,'HOUR') > $allowedTimeEnd), 1, 0 ) as riskscore
+                    insert into RiskScorePerRule;
 
-from RiskScoreRequest
-select eventId, ifThenElse( (timestamp is null),2 , ifThenElse( (time:extract(timestamp,'HOUR') < $allowedTimeStart OR time:extract(timestamp,'HOUR') > $allowedTimeEnd), 1, 0 )) as riskscore
-insert into RiskScorePerRule;
-                    
+                    from RiskScoreRequest
+                    select eventId, ifThenElse( (timestamp is null),2 , ifThenElse( (time:extract(timestamp,'HOUR') < $allowedTimeStart OR time:extract(timestamp,'HOUR') > $allowedTimeEnd), 1, 0 )) as riskscore
+                    insert into RiskScorePerRule;
+
 				]]>
                 </template>
             </templates>
             <parameters>
                 <parameter name="allowedTimeStart" type="int">
                     <displayName>Start time</displayName>
-                    <description>Start time in hours</description>
+                    <description>Start time of the allowed time period in hours</description>
                     <defaultValue>06</defaultValue>
                     <options>00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23</options>
                 </parameter>
                 <parameter name="allowedTimeEnd" type="int">
                     <displayName>End time</displayName>
-                    <description>End time in hours</description>
+                    <description>End time of the allowed time period in hours</description>
                     <defaultValue>20</defaultValue>
                     <options>00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23</options>
                 </parameter>
             </parameters>
         </scenario>
 
-        <scenario type="AllowedIpRange">
-            <description>Calculate the risk score based on the IP address</description>
+        <scenario type="ConfigureIpBasedRiskRule">
+            <description>Configure an IP range from which the incoming authentication requests are accepted without a risk</description>
             <templates>
                 <template type="realtime">
                     <![CDATA[
-/* Enter a unique ExecutionPlan */
-@Plan:name('RiskScoreCalculator-RiskViolationRule-AllowedIpRange')
+                    /* Enter a unique ExecutionPlan */
+                    @Plan:name('RiskScoreCalculator-RiskViolationRule-AllowedIpRange')
 
-/* Enter a unique description for ExecutionPlan */
-@Plan:description('Detect login outside the allowed ip range')
+                    /* Enter a unique description for ExecutionPlan */
+                    @Plan:description('Detect login outside the allowed ip range')
 
-define function ipToLong[JavaScript] return double {
-	var octetsOfIp = data[0].split(".");
-	var ipAddressAsLong = octetsOfIp[0]* 256 * 256 * 256
-					+ octetsOfIp[1]* 256 * 256
-					+ octetsOfIp[2] * 256
-					+ octetsOfIp[3] * 1;
-	return ipAddressAsLong;
-};
+                    define function ipToLong[JavaScript] return double {
+                        var octetsOfIp = data[0].split(".");
+                        var ipAddressAsLong = octetsOfIp[0]* 256 * 256 * 256
+                                        + octetsOfIp[1]* 256 * 256
+                                        + octetsOfIp[2] * 256
+                                        + octetsOfIp[3] * 1;
+                        return ipAddressAsLong;
+                    };
 
-/* define streams/tables and write queries here ... */
+                    /* define streams/tables and write queries here ... */
 
-@Import('org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0')
-define stream RiskScoreRequest (eventId string, username string, userStoreDomain string, tenantDomain string, remoteIp string, timestamp long);
+                    @Import('org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0')
+                    define stream RiskScoreRequest (eventId string, username string, userStoreDomain string, tenantDomain string, remoteIp string, timestamp long);
 
-@Export('org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0')
-define stream RiskScorePerRule (eventId string, riskscore int);
+                    @Export('org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0')
+                    define stream RiskScorePerRule (eventId string, riskscore int);
 
-from RiskScoreRequest
-select eventId,ifThenElse( (remoteIp is null), 2 , ifThenElse((ipToLong(remoteIp) < ipToLong("$allowedIpRangeStart") OR ipToLong(remoteIp) > ipToLong("$allowedIpRangeEnd")),1,0))as riskscore
-insert into RiskScorePerRule;
-                    
-]]>
+                    from RiskScoreRequest
+                    select eventId,ifThenElse( (remoteIp is null), 2 , ifThenElse((ipToLong(remoteIp) < ipToLong("$allowedIpRangeStart") OR ipToLong(remoteIp) > ipToLong("$allowedIpRangeEnd")),1,0))as riskscore
+                    insert into RiskScorePerRule;
+
+                    ]]>
                 </template>
             </templates>
             <parameters>
@@ -168,4 +168,3 @@ insert into RiskScorePerRule;
         </scenario>
     </scenarios>
 </domain>
-

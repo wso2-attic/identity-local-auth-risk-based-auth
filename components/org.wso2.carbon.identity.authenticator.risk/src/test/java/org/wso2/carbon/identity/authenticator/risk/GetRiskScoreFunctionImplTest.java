@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.testng.annotations.Test;
-import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 
 
 /**

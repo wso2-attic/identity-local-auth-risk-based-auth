@@ -27,9 +27,8 @@ import org.mockito.Matchers;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
-import org.wso2.carbon.identity.authenticator.risk.util.ConnectionHandler;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
-import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
