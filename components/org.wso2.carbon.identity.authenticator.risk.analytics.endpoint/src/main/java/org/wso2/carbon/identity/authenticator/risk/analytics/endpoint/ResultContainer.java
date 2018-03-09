@@ -19,8 +19,13 @@
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
 import org.apache.log4j.Logger;
+import org.wso2.carbon.event.template.manager.core.exception.TemplateManagerException;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.Constants;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -30,11 +35,17 @@ import java.util.concurrent.TimeUnit;
 public class ResultContainer {
     private static final Logger log = Logger.getLogger(ResultContainer.class);
     private CountDownLatch latch;
-    //if the risk score is not received from IS-Analytics, it is set to the default value 2
-    private int riskScore = Constants.DEFAULT_RISK_SCORE;
+    private List<Integer> riskScoreList = new ArrayList<>();
 
     public ResultContainer() {
-        latch = new CountDownLatch(1);
+        int numberOfRules = 0;
+        try {
+            numberOfRules = CarbonServiceValueHolder.getTemplateManagerService().getConfigurations(Constants
+                    .TEMPLATE_MANAGER_DOMAIN_NAME).size();
+        } catch (TemplateManagerException e) {
+            log.error("Failed to get number of rules deployed. " +e.getMessage(), e);
+        }
+        latch = new CountDownLatch(numberOfRules);
     }
 
     /**
@@ -44,7 +55,7 @@ public class ResultContainer {
      * @param score risk score for the request
      */
     public void addResult(int score) {
-        riskScore = score;
+        riskScoreList.add(score);
         latch.countDown();
         if (log.isDebugEnabled()) {
             log.debug("Result is added to the container. Releasing the thread");
@@ -57,8 +68,11 @@ public class ResultContainer {
      * @return risk score
      */
     public int getRiskScoreDTO() throws InterruptedException {
-        // TODO: 2/21/18 timeout should be configured not hardcoded
         latch.await(1, TimeUnit.SECONDS);
+        int riskScore = Constants.DEFAULT_RISK_SCORE;
+        if(!riskScoreList.isEmpty()){
+            riskScore = Collections.max(riskScoreList);
+        }
         return riskScore;
     }
 

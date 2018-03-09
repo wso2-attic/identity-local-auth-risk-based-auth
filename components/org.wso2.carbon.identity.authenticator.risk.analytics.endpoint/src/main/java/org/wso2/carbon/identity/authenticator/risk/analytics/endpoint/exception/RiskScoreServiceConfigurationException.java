@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exceptions;
+package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception;
 
 public class RiskScoreServiceConfigurationException extends Exception {
 

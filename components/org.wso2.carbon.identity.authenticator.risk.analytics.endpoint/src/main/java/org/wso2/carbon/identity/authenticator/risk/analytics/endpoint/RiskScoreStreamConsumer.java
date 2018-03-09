@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.stream.core.WSO2EventConsumer;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
 
 /**
  * Event consumer class to consume risk score stream. Correlation is made using streamID which is extracted from server

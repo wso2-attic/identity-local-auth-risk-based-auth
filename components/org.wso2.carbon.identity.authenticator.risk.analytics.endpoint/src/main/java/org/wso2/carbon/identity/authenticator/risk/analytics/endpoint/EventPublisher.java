@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
+import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.agent.DataPublisher;
@@ -55,6 +56,7 @@ public class EventPublisher {
         }
     }
 
+    //for testing only
     public EventPublisher(DataPublisher dataPublisher, ServerConfiguration serverConfiguration) {
         this.dataPublisher = dataPublisher;
         this.serverConfiguration = serverConfiguration;
@@ -69,13 +71,24 @@ public class EventPublisher {
      */
     public void sendEvent(AuthRequestDTO authRequest, String streamID) {
 
-        Object[] payloadData = new Object[6];
+        Object[] payloadData = new Object[14];
         payloadData[0] = streamID;
         payloadData[1] = authRequest.getUsername();
         payloadData[2] = authRequest.getUserStoreDomain();
         payloadData[3] = authRequest.getTenantDomain();
         payloadData[4] = authRequest.getRemoteIp();
         payloadData[5] = Long.parseLong(authRequest.getTimestamp());
+        payloadData[6] = authRequest.getInboundAuthType();
+        payloadData[7] = authRequest.getServiceProvider();
+        payloadData[8] = authRequest.getRememberMeEnabled();
+        payloadData[9] = authRequest.getForceAuthEnabled();
+        payloadData[10] = authRequest.getPassiveAuthEnabled();
+        payloadData[11] = authRequest.getIdentityProvider();
+        payloadData[12] = authRequest.getStepAuthenticator();
+        Gson gson = new Gson();
+        String propertyString = gson.toJson(authRequest.getPropertyMap());
+        payloadData[13] = propertyString;
+
         Event event = new Event(serverConfiguration.getAuthenticationStream(), System.currentTimeMillis(), null,
                 null, payloadData);
         if (log.isDebugEnabled()) {
@@ -83,5 +96,4 @@ public class EventPublisher {
         }
         dataPublisher.publish(event);
     }
-
 }

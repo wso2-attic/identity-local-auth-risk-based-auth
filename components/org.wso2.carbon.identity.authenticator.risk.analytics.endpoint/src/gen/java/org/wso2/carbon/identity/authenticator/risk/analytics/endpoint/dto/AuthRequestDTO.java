@@ -1,5 +1,8 @@
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.*;
@@ -49,6 +52,9 @@ public class AuthRequestDTO  {
   
   @NotNull
   private String stepAuthenticator = null;
+  
+  
+  private Map<String, String> propertyMap = new HashMap<String, String>();
 
   
   /**
@@ -195,6 +201,18 @@ public class AuthRequestDTO  {
   }
 
   
+  /**
+   **/
+  @ApiModelProperty(value = "")
+  @JsonProperty("propertyMap")
+  public Map<String, String> getPropertyMap() {
+    return propertyMap;
+  }
+  public void setPropertyMap(Map<String, String> propertyMap) {
+    this.propertyMap = propertyMap;
+  }
+
+  
 
   @Override
   public String toString()  {
@@ -213,6 +231,7 @@ public class AuthRequestDTO  {
     sb.append("  passiveAuthEnabled: ").append(passiveAuthEnabled).append("\n");
     sb.append("  identityProvider: ").append(identityProvider).append("\n");
     sb.append("  stepAuthenticator: ").append(stepAuthenticator).append("\n");
+    sb.append("  propertyMap: ").append(propertyMap).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

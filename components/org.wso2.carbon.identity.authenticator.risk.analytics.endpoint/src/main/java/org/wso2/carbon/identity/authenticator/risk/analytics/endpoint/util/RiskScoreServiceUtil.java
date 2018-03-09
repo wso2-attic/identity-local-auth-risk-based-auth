@@ -18,12 +18,12 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exceptions.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 
 import java.io.BufferedInputStream;

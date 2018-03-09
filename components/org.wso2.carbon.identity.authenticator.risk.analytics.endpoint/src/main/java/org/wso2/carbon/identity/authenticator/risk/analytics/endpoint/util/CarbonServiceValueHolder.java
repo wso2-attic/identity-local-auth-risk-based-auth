@@ -16,9 +16,12 @@
  * under the License.
  */
 
-package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
+package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.template.manager.core.TemplateManagerService;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ResultContainer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CarbonServiceValueHolder {
     private static EventStreamService eventstreamservice;
+    private static TemplateManagerService templateManagerService;
     private static Map<String, ResultContainer> resultContainerMap = new ConcurrentHashMap<>();
 
     private CarbonServiceValueHolder() {
@@ -48,5 +52,17 @@ public class CarbonServiceValueHolder {
 
     public static void setResultContainerMap(Map<String, ResultContainer> resultContainerMap) {
         CarbonServiceValueHolder.resultContainerMap = resultContainerMap;
+    }
+
+
+    public static void setTemplateManagerService(TemplateManagerService templateManagerService) {
+        CarbonServiceValueHolder.templateManagerService = templateManagerService;
+    }
+    public static TemplateManagerService getTemplateManagerService() {
+        if (templateManagerService == null) {
+            templateManagerService = (TemplateManagerService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
+                    .getOSGiService(TemplateManagerService.class, null);
+        }
+        return templateManagerService;
     }
 }
