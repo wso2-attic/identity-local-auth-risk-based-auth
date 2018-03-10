@@ -23,7 +23,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
@@ -39,18 +43,21 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 /**
- * Tests the connection with the IS Analytics and the risk scores
+ * Tests the connection with the IS Analytics
  */
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ConnectionHandler.class})
 public class ConnectionHandlerTest {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
 
     private ConnectionHandler connectionHandler;
     private String timestamp;
-
-    @BeforeClass
-    public void setup() {
-
-    }
+//
+//    @BeforeClass
+//    public void setup() {
+//
+//    }
 
 //    //auth request which satisfies all the 3 rules
 //    @Test

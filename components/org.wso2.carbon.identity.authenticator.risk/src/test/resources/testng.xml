@@ -18,10 +18,11 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Adapative-Authenticator-test-suite">
-    <test name="adaptive-authenticator" parallel="false">
+<suite name="risk-based-authentication-jsfunction-test-suite">
+    <test name="risk-based-authentication-jsfunction" parallel="false">
         <classes>
             <class name="org.wso2.carbon.identity.authenticator.risk.ConnectionHandlerTest"/>
+            <class name="org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunctionImplTest"/>
         </classes>
     </test>
 </suite>

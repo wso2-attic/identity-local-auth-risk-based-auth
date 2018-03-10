@@ -17,43 +17,93 @@
  */
 package org.wso2.carbon.identity.authenticator.risk;
 
+//import org.junit.Test;
+
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.testng.Assert;
+import org.testng.IObjectFactory;
+import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
+import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
+import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
+
+import java.util.Map;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 /**
  * TODO: Class level comments
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(RiskScoreRequestDTO.class)
-//@PrepareForTest(RiskScoreRequestDTO.class)
+@PrepareForTest({GetRiskScoreFunctionImpl.class, RiskScoreRequestDTO.class, IdentityUtil.class})
+//@PrepareForTest(GetRiskScoreFunctionImpl.class)
+//@PrepareEverythingForTest
+@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class GetRiskScoreFunctionImplTest {
+    @ObjectFactory
+    public IObjectFactory getObjectFactory() {
+        return new org.powermock.modules.testng.PowerMockObjectFactory();
+    }
+
 
     @Test
-    public void testGetRiskScore() throws Exception {
-//        GetRiskScoreFunctionImpl mockFunctionImpl = new GetRiskScoreFunctionImpl();
-//        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
-//        JsAuthenticationContext jsAuthenticationContext = mock(JsAuthenticationContext.class);
-////        AuthenticationContext authenticationContext = mock(AuthenticationContext.class);
-////        AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
-////        when(authenticationContext.getSubject()).thenReturn(authenticatedUser);
-////        when(authenticatedUser.getUserName()).thenReturn("pamoda");
-////        when(authenticatedUser.getUserStoreDomain()).thenReturn("PRIMARY");
-////        when(authenticatedUser.getTenantDomain()).thenReturn("carbon.super");
+    public void testCalculateRiskScoreMethodInvocation() throws Exception {
+//        GetRiskScoreFunctionImpl mockFunctionImpl = new GetRiskScoreFunctionImplWrapper();
+        GetRiskScoreFunctionImpl mockFunctionImpl = new GetRiskScoreFunctionImpl();
+        JsAuthenticationContext jsAuthenticationContext = mock(JsAuthenticationContext.class);
+        Map<String, String> propertyMap = mock(Map.class);
 //
-//        riskScoreRequestDTO.setUsername("pamoda");
-//        riskScoreRequestDTO.setUserStoreDomain("PRIMARY");
-//        riskScoreRequestDTO.setTenantDomain("carbon.super");
-//        riskScoreRequestDTO.setRemoteIp("123.54.43.2");
-//        riskScoreRequestDTO.setTimestamp(String.valueOf(System.currentTimeMillis()));
-//        ConnectionHandler handler = mock(ConnectionHandler.class);
-//        whenNew(RiskScoreRequestDTO.class).withArguments(Matchers.any(AuthenticationContext.class)).thenReturn
-// (riskScoreRequestDTO);
+//        mockStatic(IdentityUtil.class);
+//        AuthenticationContext authenticationContext = mock(AuthenticationContext.class);
+//        AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+//        when(authenticationContext.getSubject()).thenReturn(authenticatedUser);
+//        when(authenticatedUser.getUserName()).thenReturn("pamoda");
+//        when(authenticatedUser.getUserStoreDomain()).thenReturn("PRIMARY");
+//        when(authenticatedUser.getTenantDomain()).thenReturn("carbon.super");
+//        when(authenticationContext.getExternalIdP()).thenReturn(mock(ExternalIdPConfig.class));
+//        when(authenticationContext.getExternalIdP().getIdPName()).thenReturn("anyIDP");
+//        when(authenticationContext.getRequest()).thenReturn(mock(HttpServletRequest.class));
+//        when(authenticationContext.getServiceProviderName()).thenReturn("ISPprovider");
+//        when(authenticationContext.getRequestType()).thenReturn("type");
+//        when(authenticationContext.isRememberMe()).thenReturn(false);
+//        when(authenticationContext.isForceAuthenticate()).thenReturn(false);
+//        when(authenticationContext.isPassiveAuthenticate()).thenReturn(false);
+//        when(authenticationContext.getCurrentAuthenticator()).thenReturn("currentAuth");
+//        when(IdentityUtil.getClientIpAddress(Mockito.any(HttpServletRequest.class))).thenReturn("127.8.9.9");
+//        when(jsAuthenticationContext.getWrapped()).thenReturn(authenticationContext);
 //
-//        mockFunctionImpl.getRiskScore(jsAuthenticationContext);
-//        Mockito.verify(handler, Mockito.times(1)).calculateRiskScore(riskScoreRequestDTO);
+//        mockStatic(RiskScoreRequestDTO.class);
+        ConnectionHandler handler = mock(ConnectionHandler.class);
+        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
+
+        whenNew(RiskScoreRequestDTO.class).withAnyArguments().thenReturn(riskScoreRequestDTO);
+        whenNew(ConnectionHandler.class).withNoArguments().thenReturn(handler);
+        mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap);
+        verify(handler, Mockito.times(1)).calculateRiskScore(riskScoreRequestDTO);
     }
+
+    @Test
+    public void testCalculateRiskScoreExceptions() throws Exception {
+        ConnectionHandler handler = mock(ConnectionHandler.class);
+        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
+        whenNew(RiskScoreRequestDTO.class).withAnyArguments().thenReturn(riskScoreRequestDTO);
+        whenNew(ConnectionHandler.class).withNoArguments().thenReturn(handler);
+        when(handler.calculateRiskScore(riskScoreRequestDTO)).thenThrow(new RiskScoreCalculationException());
+        GetRiskScoreFunctionImpl mockFunctionImpl = new GetRiskScoreFunctionImpl();
+        JsAuthenticationContext jsAuthenticationContext = mock(JsAuthenticationContext.class);
+        Map<String, String> propertyMap = mock(Map.class);
+        Assert.assertEquals(mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap), 2);
+    }
+
+
 }
