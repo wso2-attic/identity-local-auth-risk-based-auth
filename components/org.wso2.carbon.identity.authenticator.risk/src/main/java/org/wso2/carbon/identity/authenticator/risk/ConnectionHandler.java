@@ -96,14 +96,14 @@ public class ConnectionHandler {
             httpPost.setEntity(requestBody);
 
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
-            throw new RiskScoreCalculationException("Failed to initialize http request body. ", e, riskScore);
+            throw new RiskScoreCalculationException("Failed to initialize http request body. ", e);
         }
 
         //execute the API call and obtain the result
         try {
             httpResponse = httpClient.execute(httpPost);
         } catch (IOException e) {
-            throw new RiskScoreCalculationException("Failed to connect with the server. ", e, riskScore);
+            throw new RiskScoreCalculationException("Failed to connect with the server. ", e);
         } finally {
             connectionManager.shutdown();
         }
@@ -113,7 +113,7 @@ public class ConnectionHandler {
                 RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
                 riskScore = riskScoreDTO.getScore();
             } catch (IOException e) {
-                throw new RiskScoreCalculationException("Failed to get risk score from response. ", e, riskScore);
+                throw new RiskScoreCalculationException("Failed to get risk score from response. ", e);
             }
         } else {
             throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode

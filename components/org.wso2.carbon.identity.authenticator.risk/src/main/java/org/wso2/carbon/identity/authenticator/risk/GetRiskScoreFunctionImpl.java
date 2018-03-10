@@ -24,6 +24,7 @@ import org.wso2.carbon.identity.application.authentication.framework.config.mode
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsParameters;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
 
 import java.util.Map;
 
@@ -43,10 +44,12 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
             riskScore = handler.calculateRiskScore(requestDTO);
         } catch (RiskScoreCalculationException e) {
             log.warn("Could not calculate risk score. " + e.getMessage(), e);
-            riskScore = e.getRiskScore();
+            riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
         }
         return riskScore;
     }
+
+
 
 
 }

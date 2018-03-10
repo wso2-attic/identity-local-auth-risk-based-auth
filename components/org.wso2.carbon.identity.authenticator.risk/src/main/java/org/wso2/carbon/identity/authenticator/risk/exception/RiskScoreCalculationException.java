@@ -21,24 +21,16 @@ package org.wso2.carbon.identity.authenticator.risk.exception;
  * Exception occur during the risk score calculation process
  */
 public class RiskScoreCalculationException extends Exception {
-    private int riskScore;
 
-    public RiskScoreCalculationException(String message, Throwable cause, int riskScore) {
+    public RiskScoreCalculationException() {
+    }
+
+    public RiskScoreCalculationException(String message, Throwable cause) {
         super(message, cause);
-        this.riskScore = riskScore;
     }
 
     public RiskScoreCalculationException(String message, int riskScore) {
         super(message);
-        this.riskScore = riskScore;
-    }
-
-    public int getRiskScore() {
-        return riskScore;
-    }
-
-    public void setRiskScore(int riskScore) {
-        this.riskScore = riskScore;
     }
 
 }
