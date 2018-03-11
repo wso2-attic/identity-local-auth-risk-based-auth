@@ -17,15 +17,11 @@
  */
 package org.wso2.carbon.identity.authenticator.risk;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -38,7 +34,6 @@ import org.apache.http.util.EntityUtils;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -51,11 +46,15 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTOTest;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -104,8 +103,8 @@ public class ConnectionHandlerTest {
     @BeforeMethod
     public void setUp() throws Exception {
         initMocks(this);
-        connectionHandler = new ConnectionHandler(mockHttpClient,mockHttpPost);
-
+        connectionHandler = new ConnectionHandler(mockHttpClient, mockHttpPost);
+//        connectionHandler = new ConnectionHandler();
         StringEntity requestBody = mock(StringEntity.class);
 
 //        mockStatic(HttpClientBuilder.class);
@@ -137,9 +136,31 @@ public class ConnectionHandlerTest {
         when(mockHttpResponse.getEntity()).thenReturn(httpEntity);
         mockStatic(EntityUtils.class);
         when(EntityUtils.toString(httpEntity)).thenReturn("response");
-        when(mapper.readValue("response",RiskScoreDTO.class)).thenReturn(riskScore);
+        when(mapper.readValue("response", RiskScoreDTO.class)).thenReturn(riskScore);
         when(riskScore.getScore()).thenReturn(1);
-        Assert.assertEquals(connectionHandler.calculateRiskScore(riskScoreRequestDTO) , 1);
+        Assert.assertEquals(connectionHandler.calculateRiskScore(riskScoreRequestDTO), 1);
+    }
+
+    @Test
+    public void testResposeConvertionError() throws Exception {
+        log.info("Testing response converting error");
+
+        HttpEntity httpEntity = mock(HttpEntity.class);
+        RiskScoreDTO riskScore = mock(RiskScoreDTO.class);
+//        connectionHandler = new ConnectionHandler(mockHttpClient,mockHttpPost);
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
+        when(mockStatusLine.getStatusCode()).thenReturn(200);
+        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
+        when(mockHttpResponse.getEntity()).thenReturn(httpEntity);
+        mockStatic(EntityUtils.class);
+        when(EntityUtils.toString(httpEntity)).thenReturn("response");
+        when(mapper.readValue("response", RiskScoreDTO.class)).thenThrow(new IOException());
+        try {
+            connectionHandler.calculateRiskScore(riskScoreRequestDTO);
+        } catch (RiskScoreCalculationException e) {
+            Assert.assertEquals(e.getMessage(), "Failed to get risk score from response. ");
+        }
     }
 
     @Test
@@ -151,8 +172,9 @@ public class ConnectionHandlerTest {
         when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
-            Assert.fail("Risk Calculation failed");
-        } catch (RiskScoreCalculationException ignored) {
+        } catch (RiskScoreCalculationException e) {
+            Assert.assertEquals(e.getMessage(), "HTTP error code : " + mockHttpResponse.getStatusLine().getStatusCode
+                    ());
         }
     }
 
@@ -163,10 +185,9 @@ public class ConnectionHandlerTest {
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new SocketTimeoutException());
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
-            Assert.fail("Risk Calculation failed");
-        } catch (RiskScoreCalculationException ignored) {
+        } catch (RiskScoreCalculationException e) {
+            Assert.assertEquals(e.getMessage(), "Failed to connect with the server. ");
         }
-
     }
 
     @Test
@@ -178,9 +199,22 @@ public class ConnectionHandlerTest {
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
             Assert.fail("Risk Calculation failed");
-        } catch (RiskScoreCalculationException ignored) {
+        } catch (RiskScoreCalculationException e) {
+            Assert.assertEquals(e.getMessage(), "Failed to connect with the server. ");
         }
     }
+
+//    @Test
+//    public void testCilentBuilder() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+//        mockStatic(HttpClientBuilder.class);
+//
+//        HttpClientBuilder mockBuilder = mock(HttpClientBuilder.class);
+//
+//        when(HttpClientBuilder.create()).thenReturn(mockBuilder);
+//        when(mockBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
+//                .loadTrustMaterial(null,new TrustSelfSignedStrategy()).build()))).thenThrow(new KeyStoreException());
+//
+//    }
 
 
 //    //auth request which satisfies all the 3 rules
