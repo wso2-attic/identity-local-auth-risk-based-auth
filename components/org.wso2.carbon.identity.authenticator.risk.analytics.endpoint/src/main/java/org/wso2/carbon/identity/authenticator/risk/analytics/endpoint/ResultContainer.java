@@ -40,7 +40,7 @@ public class ResultContainer {
     public ResultContainer() {
         int numberOfRules = 0;
         try {
-            numberOfRules = CarbonServiceValueHolder.getTemplateManagerService().getConfigurations(Constants
+            numberOfRules = CarbonServiceValueHolder.getInstance().getTemplateManagerService().getConfigurations(Constants
                     .TEMPLATE_MANAGER_DOMAIN_NAME).size();
         } catch (TemplateManagerException e) {
             log.error("Failed to get number of rules deployed. " +e.getMessage(), e);

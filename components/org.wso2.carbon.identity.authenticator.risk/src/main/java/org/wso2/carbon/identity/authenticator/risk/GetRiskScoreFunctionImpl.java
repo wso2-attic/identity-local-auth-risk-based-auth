@@ -21,7 +21,6 @@ package org.wso2.carbon.identity.authenticator.risk;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
-import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsParameters;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
@@ -35,7 +34,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     private static final Log log = LogFactory.getLog(GetRiskScoreFunctionImpl.class);
 
     @Override
-    public int getRiskScore(JsAuthenticationContext context, Map<String,String> propertyMap) {
+    public int getRiskScore(JsAuthenticationContext context, Map<String, String> propertyMap) {
 
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped(), propertyMap);
         int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
@@ -48,8 +47,6 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
         }
         return riskScore;
     }
-
-
 
 
 }

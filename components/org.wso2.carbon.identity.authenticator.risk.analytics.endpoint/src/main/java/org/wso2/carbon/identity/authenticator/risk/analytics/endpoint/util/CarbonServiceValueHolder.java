@@ -30,7 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Holder object to hold references which are needed by multiple classes.
  */
 public class CarbonServiceValueHolder {
-    private static EventStreamService eventstreamservice;
+    private static CarbonServiceValueHolder instance;
+    private static EventStreamService eventStreamService;
     private static TemplateManagerService templateManagerService;
     private static Map<String, ResultContainer> resultContainerMap = new ConcurrentHashMap<>();
 
@@ -38,31 +39,42 @@ public class CarbonServiceValueHolder {
         //DO nothing
     }
 
-    public static EventStreamService getEventstreamservice() {
-        return eventstreamservice;
+    public static CarbonServiceValueHolder getInstance() {
+        if (instance == null) {
+            instance = new CarbonServiceValueHolder();
+        }
+        return instance;
     }
 
-    public static void setEventstreamservice(EventStreamService eventstreamservice) {
-        CarbonServiceValueHolder.eventstreamservice = eventstreamservice;
+    public EventStreamService getEventStreamService() {
+        if (eventStreamService == null) {
+            eventStreamService = (EventStreamService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
+                    .getOSGiService(EventStreamService.class, null);
+        }
+        return eventStreamService;
     }
 
-    public static Map<String, ResultContainer> getResultContainerMap() {
+    public void setEventStreamService(EventStreamService eventStreamService) {
+        CarbonServiceValueHolder.eventStreamService = eventStreamService;
+    }
+
+    public Map<String, ResultContainer> getResultContainerMap() {
         return resultContainerMap;
     }
 
-    public static void setResultContainerMap(Map<String, ResultContainer> resultContainerMap) {
+    public void setResultContainerMap(Map<String, ResultContainer> resultContainerMap) {
         CarbonServiceValueHolder.resultContainerMap = resultContainerMap;
     }
 
-
-    public static void setTemplateManagerService(TemplateManagerService templateManagerService) {
-        CarbonServiceValueHolder.templateManagerService = templateManagerService;
-    }
-    public static TemplateManagerService getTemplateManagerService() {
+    public TemplateManagerService getTemplateManagerService() {
         if (templateManagerService == null) {
             templateManagerService = (TemplateManagerService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
                     .getOSGiService(TemplateManagerService.class, null);
         }
         return templateManagerService;
+    }
+
+    public void setTemplateManagerService(TemplateManagerService templateManagerService) {
+        CarbonServiceValueHolder.templateManagerService = templateManagerService;
     }
 }

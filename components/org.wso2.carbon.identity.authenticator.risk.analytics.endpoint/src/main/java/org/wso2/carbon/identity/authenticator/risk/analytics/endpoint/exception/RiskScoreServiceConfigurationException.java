@@ -20,19 +20,12 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception
 
 public class RiskScoreServiceConfigurationException extends Exception {
 
-    public RiskScoreServiceConfigurationException() {
-    }
-
     public RiskScoreServiceConfigurationException(String message) {
         super(message);
     }
 
     public RiskScoreServiceConfigurationException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public RiskScoreServiceConfigurationException(Throwable cause) {
-        super(cause);
     }
 
 }

@@ -53,16 +53,13 @@ public class CalculateApiServiceImpl extends CalculateApiService {
 
     private EventStreamService eventStreamService;
     private RiskScoreStreamConsumer riskScoreStreamConsumer;
-    private Map<String, ResultContainer> resultContainerMap = new ConcurrentHashMap<>();
+    private Map<String, ResultContainer> resultContainerMap;
     private EventPublisher publisher;
 
     public CalculateApiServiceImpl() {
 
-        eventStreamService = (EventStreamService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                .getOSGiService(EventStreamService.class, null);
-        //Set the references so other classes can reuse
-        CarbonServiceValueHolder.setEventstreamservice(eventStreamService);
-        CarbonServiceValueHolder.setResultContainerMap(resultContainerMap);
+        eventStreamService = CarbonServiceValueHolder.getInstance().getEventStreamService();
+        resultContainerMap = CarbonServiceValueHolder.getInstance().getResultContainerMap();
 
         try {
             //Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml

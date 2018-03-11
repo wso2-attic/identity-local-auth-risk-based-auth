@@ -15,10 +15,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package identity.anlaytics.riskscore;
+package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -31,8 +32,6 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.agent.DataPublisher;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointAgentConfigurationException;
 import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisher;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 
@@ -40,6 +39,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
@@ -50,6 +50,12 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({EventPublisher.class})
 public class EventPublisherTest {
 
+    @Mock
+    private ServerConfiguration serverConfiguration;
+
+    @Mock
+    private DataPublisher dataPublisher;
+
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
@@ -57,18 +63,18 @@ public class EventPublisherTest {
 
     @BeforeMethod
     void setUp() {
-    }
-
-    @Test
-    public void testEventPubliser() throws Exception {
-        ServerConfiguration serverConfiguration = mock(ServerConfiguration.class);
+        initMocks(this);
         when(serverConfiguration.getHostname()).thenReturn("localhost");
         when(serverConfiguration.getBinaryTCPPort()).thenReturn("9612");
         when(serverConfiguration.getBinarySSLPort()).thenReturn("9712");
         when(serverConfiguration.getUsername()).thenReturn("admin");
         when(serverConfiguration.getPassword()).thenReturn("admin");
 
-        DataPublisher dataPublisher = mock(DataPublisher.class);
+    }
+
+    @Test
+    public void testEventPubliser() throws Exception {
+
         whenNew(DataPublisher.class).withAnyArguments().thenReturn(dataPublisher);
         EventPublisher eventPublisher = new EventPublisher(serverConfiguration);
         AuthRequestDTO authRequestDTO = mock(AuthRequestDTO.class);
@@ -82,28 +88,15 @@ public class EventPublisherTest {
 
     @Test
     public void testConstructor() throws Exception {
-        ServerConfiguration serverConfiguration = mock(ServerConfiguration.class);
-        when(serverConfiguration.getHostname()).thenReturn("localhost");
-        when(serverConfiguration.getBinaryTCPPort()).thenReturn("9612");
-        when(serverConfiguration.getBinarySSLPort()).thenReturn("9712");
-        when(serverConfiguration.getUsername()).thenReturn("admin");
-        when(serverConfiguration.getPassword()).thenReturn("admin");
-        DataPublisher dataPublisher = mock(DataPublisher.class);
         whenNew(DataPublisher.class).withAnyArguments().thenThrow(new DataEndpointAgentConfigurationException
                 ("DataEndpointAgentConfigurationException"));
-
-        AuthRequestDTO authRequestDTO = mock(AuthRequestDTO.class);
-        when(authRequestDTO.getTimestamp()).thenReturn(String.valueOf(System.currentTimeMillis()));
         try {
             EventPublisher eventPublisher = new EventPublisher(serverConfiguration);
-            Assert.fail("");
-        }catch (RiskScoreServiceConfigurationException ignored){
-
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
         }
         Mockito.verify(dataPublisher, Mockito.times(0)).publish(Matchers.any(Event.class));
 
-
-
-
     }
+
 }
