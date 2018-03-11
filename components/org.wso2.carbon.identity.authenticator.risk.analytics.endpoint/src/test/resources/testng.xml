@@ -21,7 +21,7 @@
 <suite name="Risk-Score-Calculator-test-suite">
     <test name="risk-score-calculator" parallel="false">
         <classes>
-            <class name="identity.anlaytics.riskscore.RiskScoreTest"/>
+            <!--<class name="identity.anlaytics.riskscore.RiskScoreTest"/>-->
             <class name="identity.anlaytics.riskscore.EventPublisherTest"/>
             <class name="identity.anlaytics.riskscore.GetRiskScoreApiServiceTest"/>
             <class name="identity.anlaytics.riskscore.ResultContainerTest"/>

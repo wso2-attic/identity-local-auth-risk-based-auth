@@ -29,6 +29,7 @@ import org.wso2.carbon.databridge.agent.exception.DataEndpointException;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.exception.TransportException;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 
 /**
  * Event Publisher class to publish incoming requests as events to CEP engine.
@@ -38,7 +39,7 @@ public class EventPublisher {
     private DataPublisher dataPublisher;
     private ServerConfiguration serverConfiguration;
 
-    public EventPublisher(ServerConfiguration serverConfiguration) {
+    public EventPublisher(ServerConfiguration serverConfiguration) throws RiskScoreServiceConfigurationException {
         this.serverConfiguration = serverConfiguration;
         try {
             this.dataPublisher = new DataPublisher("Binary", "tcp://" + serverConfiguration.getHostname() +
@@ -51,17 +52,10 @@ public class EventPublisher {
 
         } catch (DataEndpointAgentConfigurationException | DataEndpointException |
                 DataEndpointAuthenticationException | DataEndpointConfigurationException | TransportException e) {
-            log.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
-                    e.getMessage(), e);
+            throw new RiskScoreServiceConfigurationException("Error in initializing binary data-publisher to send " +
+                    "requests to global throttling engine ", e);
         }
     }
-
-    //for testing only
-    public EventPublisher(DataPublisher dataPublisher, ServerConfiguration serverConfiguration) {
-        this.dataPublisher = dataPublisher;
-        this.serverConfiguration = serverConfiguration;
-    }
-
 
     /**
      * create an event matching with the stream definition in IS analytics

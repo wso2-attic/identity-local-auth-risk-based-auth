@@ -24,6 +24,7 @@
             <class name="org.wso2.carbon.identity.authenticator.risk.ConnectionHandlerTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunctionImplTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTOTest"/>
+            <class name="org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTOTest"/>
         </classes>
     </test>
 </suite>
