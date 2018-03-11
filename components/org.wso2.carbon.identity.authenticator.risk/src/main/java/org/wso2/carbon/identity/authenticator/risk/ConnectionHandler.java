@@ -55,15 +55,16 @@ public class ConnectionHandler {
     private HttpResponse httpResponse;
     private HttpPost httpPost;
 
-    public ConnectionHandler() {
+    public ConnectionHandler() throws RiskScoreCalculationException {
         connectionManager = new BasicHttpClientConnectionManager();
         httpClient = null;
         try {
-            httpClient = HttpClientBuilder.create()
-                    .setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null,
-                            new TrustSelfSignedStrategy()).build())).build();
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
+                    .loadTrustMaterial(null,new TrustSelfSignedStrategy()).build()));
+            httpClient = httpClientBuilder.build();
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-            log.error("Failed to establish a secure connection. " + e.getMessage(), e);
+            throw new RiskScoreCalculationException("Failed to establish a secure connection. ", e);
         }
         httpResponse = null;
         RequestConfig requestConfig = RequestConfig.custom()
@@ -77,6 +78,12 @@ public class ConnectionHandler {
 
     }
 
+    public ConnectionHandler(HttpClient httpClient, HttpPost httpPost) {
+        connectionManager = new BasicHttpClientConnectionManager();
+        this.httpClient = httpClient;
+        this.httpPost = httpPost;
+    }
+
     /**
      * send the authentication request data to the IS analytics and obtain the risk score
      *
@@ -87,7 +94,7 @@ public class ConnectionHandler {
             RiskScoreCalculationException {
 
         ObjectMapper mapper = new ObjectMapper();
-        int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
+        int riskScore;
 
         try {
             String requestBodyInString = mapper.writeValueAsString(requestDTO);
@@ -117,7 +124,7 @@ public class ConnectionHandler {
             }
         } else {
             throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode
-                    (), riskScore);
+                    ());
         }
         return riskScore;
     }

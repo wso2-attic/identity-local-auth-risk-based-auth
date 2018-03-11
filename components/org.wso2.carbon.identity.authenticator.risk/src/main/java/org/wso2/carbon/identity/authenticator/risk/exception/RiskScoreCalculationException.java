@@ -25,12 +25,12 @@ public class RiskScoreCalculationException extends Exception {
     public RiskScoreCalculationException() {
     }
 
-    public RiskScoreCalculationException(String message, Throwable cause) {
-        super(message, cause);
+    public RiskScoreCalculationException(String message) {
+        super(message);
     }
 
-    public RiskScoreCalculationException(String message, int riskScore) {
-        super(message);
+    public RiskScoreCalculationException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

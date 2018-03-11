@@ -17,28 +17,50 @@
  */
 package org.wso2.carbon.identity.authenticator.risk;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.testng.PowerMockObjectFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.IObjectFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
-import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
@@ -47,17 +69,119 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ConnectionHandler.class})
+@PrepareForTest({ConnectionHandler.class, HttpClientBuilder.class, EntityUtils.class})
+@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class ConnectionHandlerTest {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
 
     private ConnectionHandler connectionHandler;
-    private String timestamp;
+
+    @Mock
+    private RiskScoreRequestDTO riskScoreRequestDTO;
+
+    @Mock
+    private CloseableHttpClient mockHttpClient;
+
+    @Mock
+    private CloseableHttpResponse mockHttpResponse;
+
+    @Mock
+    private HttpPost mockHttpPost;
+
+    @Mock
+    private StatusLine mockStatusLine;
+
+    @Mock
+    private ObjectMapper mapper;
+
+
+    @ObjectFactory
+    public IObjectFactory getObjectFactory() {
+        return new PowerMockObjectFactory();
+    }
+
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        initMocks(this);
+        connectionHandler = new ConnectionHandler(mockHttpClient,mockHttpPost);
+
+        StringEntity requestBody = mock(StringEntity.class);
+
+//        mockStatic(HttpClientBuilder.class);
 //
-//    @BeforeClass
-//    public void setup() {
+//        HttpClientBuilder mockBuilder = mock(HttpClientBuilder.class);
 //
-//    }
+//        when(HttpClientBuilder.create()).thenReturn(mockBuilder);
+//        when(mockBuilder.build()).thenReturn(mockHttpClient);
+        when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
+
+        whenNew(ObjectMapper.class).withNoArguments().thenReturn(mapper);
+        whenNew(StringEntity.class).withAnyArguments().thenReturn(requestBody);
+        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
+
+    }
+
+
+    @Test
+    public void testResponseCode() throws Exception {
+        log.info("Testing response code");
+
+        HttpEntity httpEntity = mock(HttpEntity.class);
+        RiskScoreDTO riskScore = mock(RiskScoreDTO.class);
+//        connectionHandler = new ConnectionHandler(mockHttpClient,mockHttpPost);
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
+        when(mockStatusLine.getStatusCode()).thenReturn(200);
+        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
+        when(mockHttpResponse.getEntity()).thenReturn(httpEntity);
+        mockStatic(EntityUtils.class);
+        when(EntityUtils.toString(httpEntity)).thenReturn("response");
+        when(mapper.readValue("response",RiskScoreDTO.class)).thenReturn(riskScore);
+        when(riskScore.getScore()).thenReturn(1);
+        Assert.assertEquals(connectionHandler.calculateRiskScore(riskScoreRequestDTO) , 1);
+    }
+
+    @Test
+    public void testResponseError() throws Exception {
+        log.info("Testing response error code");
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
+        when(mockStatusLine.getStatusCode()).thenReturn(404);
+        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
+        try {
+            connectionHandler.calculateRiskScore(riskScoreRequestDTO);
+            Assert.fail("Risk Calculation failed");
+        } catch (RiskScoreCalculationException ignored) {
+        }
+    }
+
+    @Test
+    public void testResponseDelay() throws Exception {
+        log.info("Testing response delay");
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new SocketTimeoutException());
+        try {
+            connectionHandler.calculateRiskScore(riskScoreRequestDTO);
+            Assert.fail("Risk Calculation failed");
+        } catch (RiskScoreCalculationException ignored) {
+        }
+
+    }
+
+    @Test
+    public void testConnectionError() throws Exception {
+        log.info("Testing connection failure");
+        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
+
+        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
+        try {
+            connectionHandler.calculateRiskScore(riskScoreRequestDTO);
+            Assert.fail("Risk Calculation failed");
+        } catch (RiskScoreCalculationException ignored) {
+        }
+    }
+
 
 //    //auth request which satisfies all the 3 rules
 //    @Test
@@ -135,52 +259,6 @@ public class ConnectionHandlerTest {
 //        timestamp = "1519855524000";
 //        Assert.assertEquals(connectionHandler.calculateRiskScore(context, timestamp, "02.176.254.62"), 3);
 //    }
-
-    @Test(expectedExceptions = RiskScoreCalculationException.class)
-    public void testResponseError() throws Exception {
-        log.info("Testing response error code");
-        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
-
-        HttpClient mockHttpClient = mock(HttpClient.class);
-        HttpResponse mockHttpResponse = mock(HttpResponse.class);
-        HttpPost mockHttpPost = mock(HttpPost.class);
-        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
-        StatusLine mockStatusLine = mock(StatusLine.class);
-
-        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
-        when(mockStatusLine.getStatusCode()).thenReturn(404);
-        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
-        connectionHandler = new ConnectionHandler();
-        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
-    }
-
-    @Test(expectedExceptions = RiskScoreCalculationException.class)
-    public void testResponseDelay() throws Exception {
-        log.info("Testing response delay");
-        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
-        HttpClient mockHttpClient = mock(HttpClient.class);
-        HttpPost mockHttpPost = mock(HttpPost.class);
-        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
-
-        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new SocketTimeoutException());
-        connectionHandler = new ConnectionHandler();
-        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
-
-    }
-
-    @Test(expectedExceptions = RiskScoreCalculationException.class)
-    public void testConnectionError() throws Exception {
-        log.info("Testing connection failure");
-        RiskScoreRequestDTO riskScoreRequestDTO = mock(RiskScoreRequestDTO.class);
-
-        HttpClient mockHttpClient = mock(HttpClient.class);
-        HttpPost mockHttpPost = mock(HttpPost.class);
-        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
-
-        when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
-        connectionHandler = new ConnectionHandler();
-        connectionHandler.calculateRiskScore(riskScoreRequestDTO);
-    }
 
 
 }

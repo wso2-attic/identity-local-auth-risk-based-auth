@@ -38,13 +38,13 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     public int getRiskScore(JsAuthenticationContext context, Map<String,String> propertyMap) {
 
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped(), propertyMap);
-        ConnectionHandler handler = new ConnectionHandler();
-        int riskScore;
+        int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
         try {
+            ConnectionHandler handler = new ConnectionHandler();
             riskScore = handler.calculateRiskScore(requestDTO);
         } catch (RiskScoreCalculationException e) {
             log.warn("Could not calculate risk score. " + e.getMessage(), e);
-            riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
+
         }
         return riskScore;
     }
