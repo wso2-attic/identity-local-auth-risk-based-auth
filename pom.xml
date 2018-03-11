@@ -40,7 +40,6 @@
         <module>components/org.wso2.carbon.identity.authenticator.risk</module>
         <module>features/org.wso2.carbon.identity.authenticator.risk.analytics.feature</module>
         <module>components/org.wso2.carbon.identity.authenticator.risk.analytics.endpoint</module>
-        <module>components/org.wso2.carbon.identity.authenticator.risk</module>
 
     </modules>
 
@@ -414,7 +413,7 @@
         <carbon.identity.package.export.version>${project.version}</carbon.identity.package.export.version>
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
-        <powermock.version>1.6.6</powermock.version>
+        <powermock.version>1.6.5</powermock.version>
         <mockito.version>1.10.19</mockito.version>
         <testng.version>6.9.10</testng.version>
         <jacoco.version>0.7.9</jacoco.version>
