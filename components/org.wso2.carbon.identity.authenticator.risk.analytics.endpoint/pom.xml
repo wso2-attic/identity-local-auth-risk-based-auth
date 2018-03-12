@@ -250,7 +250,7 @@
                     <systemPropertyVariables>
                         <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
                     </systemPropertyVariables>
-                    <reuseForks>true</reuseForks>
+                    <!--<reuseForks>true</reuseForks>-->
                 </configuration>
             </plugin>
             <plugin>

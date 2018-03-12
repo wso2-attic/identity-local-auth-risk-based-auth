@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.identity.authenticator.risk;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
@@ -55,13 +54,18 @@ public class ConnectionHandler {
     private HttpResponse httpResponse;
     private HttpPost httpPost;
 
+    /**
+     * Initiates the HttpClient, HttpPost and the Connection Manager
+     *
+     * @throws RiskScoreCalculationException throws the exception if the connection is not established
+     */
     public ConnectionHandler() throws RiskScoreCalculationException {
         connectionManager = new BasicHttpClientConnectionManager();
         httpClient = null;
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
             httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
-                    .loadTrustMaterial(null,new TrustSelfSignedStrategy()).build()));
+                    .loadTrustMaterial(null, new TrustSelfSignedStrategy()).build()));
             httpClient = httpClientBuilder.build();
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
             throw new RiskScoreCalculationException("Failed to establish a secure connection. ", e);

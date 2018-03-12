@@ -28,7 +28,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
+import org.wso2.carbon.event.template.manager.core.TemplateManagerService;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 
 import java.util.Map;
 
@@ -38,13 +39,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * Tests RiskScoreConsumer class
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CarbonServiceValueHolder.class})
+@PrepareForTest({ServiceValueHolder.class})
 public class RiskScoreStreamConsumerTest {
 
     @Mock
@@ -56,6 +58,8 @@ public class RiskScoreStreamConsumerTest {
     @Mock
     private Event event;
 
+    @Mock
+    private TemplateManagerService templateManagerService;
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
@@ -64,9 +68,14 @@ public class RiskScoreStreamConsumerTest {
     @BeforeMethod
     void setUp() {
         initMocks(this);
-        mockStatic(CarbonServiceValueHolder.class);
+//        mockStatic(ServiceValueHolder.class);
+//        ServiceValueHolder carbonServiceValueHolder = mock(ServiceValueHolder.class);
+//        when(ServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
+//        when(ServiceValueHolder.getInstance().getResultContainerMap()).thenReturn(resultContainerMap);
+//        when(ServiceValueHolder.getInstance().getTemplateManagerService()).thenReturn(templateManagerService);
+        ServiceValueHolder.getInstance().setTemplateManagerService(templateManagerService);
+        ServiceValueHolder.getInstance().setResultContainerMap(resultContainerMap);
     }
-
 
     @Test
     public void testEventAdd() {
@@ -74,10 +83,8 @@ public class RiskScoreStreamConsumerTest {
         Object[] payloadData = new Object[2];
         payloadData[0] = "someUUID";
         payloadData[1] = 1;
+
         when(event.getPayloadData()).thenReturn(payloadData);
-        CarbonServiceValueHolder carbonServiceValueHolder = mock(CarbonServiceValueHolder.class);
-        when(CarbonServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
-        when(CarbonServiceValueHolder.getInstance().getResultContainerMap()).thenReturn(resultContainerMap);
         when(resultContainerMap.get(payloadData[0])).thenReturn(container);
         consumer.onEvent(event);
         verify(container, times(1)).addResult(1);
@@ -88,5 +95,4 @@ public class RiskScoreStreamConsumerTest {
         RiskScoreStreamConsumer consumer = new RiskScoreStreamConsumer("RiskScoreStream");
         Assert.assertEquals(consumer.getStreamId(),"RiskScoreStream");
     }
-
 }

@@ -17,8 +17,10 @@
  */
 package org.wso2.carbon.identity.authenticator.risk.model;
 
-import org.apache.http.HttpRequest;
-import org.jivesoftware.smack.packet.Authentication;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -35,29 +37,27 @@ import org.wso2.carbon.identity.application.authentication.framework.context.Aut
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import static org.mockito.Mockito.mockingDetails;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * Test Risk Score Request object functions
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ RiskScoreRequestDTO.class, IdentityUtil.class})
+@PrepareForTest({RiskScoreRequestDTO.class, IdentityUtil.class, EntityUtils.class})
 public class RiskScoreRequestDTOTest {
-
-    private RiskScoreRequestDTO riskScoreRequestDTO;
 
     @Mock
     AuthenticationContext authenticationContext;
-
     @Mock
     Map<String, String> propertyMap;
+    private RiskScoreRequestDTO riskScoreRequestDTO;
 
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
@@ -66,7 +66,7 @@ public class RiskScoreRequestDTOTest {
 
 
     @BeforeMethod
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.initMocks(this);
 
         AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
@@ -90,16 +90,26 @@ public class RiskScoreRequestDTOTest {
         when(authenticationContext.getCurrentAuthenticator()).thenReturn("step");
     }
 
-    @Test
-    public void testGetTenanatDomain(){
-        riskScoreRequestDTO = new RiskScoreRequestDTO(authenticationContext, propertyMap);
-        Assert.assertEquals(riskScoreRequestDTO.getTenantDomain(), "carbon.super");
-    }
 
     @Test
-    public void testGetRemoteIP(){
+    public void testGettersAndSetters() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         riskScoreRequestDTO = new RiskScoreRequestDTO(authenticationContext, propertyMap);
-        Assert.assertEquals(riskScoreRequestDTO.getRemoteIp(), "123.43.21.4");
+
+        StringEntity requestBody = null;
+        RiskScoreRequestDTO newRequest = null;
+        try {
+            String requestBodyInString = mapper.writeValueAsString(riskScoreRequestDTO);
+            requestBody = new StringEntity(requestBodyInString);
+            String requestString = EntityUtils.toString(requestBody);
+            newRequest = mapper.readValue(requestString, RiskScoreRequestDTO.class);
+
+        } catch (UnsupportedEncodingException | JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(requestBody);
+        Assert.assertNotNull(newRequest);
     }
+
 
 }

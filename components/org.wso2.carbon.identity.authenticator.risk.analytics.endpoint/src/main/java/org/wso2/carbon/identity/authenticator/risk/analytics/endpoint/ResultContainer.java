@@ -20,8 +20,8 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
 import org.apache.log4j.Logger;
 import org.wso2.carbon.event.template.manager.core.exception.TemplateManagerException;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.Constants;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,35 +30,39 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Container object blocks the request thread, collects result from IS-Analytics return the request thread
+ * Container object blocks the request thread, collects result from IS-Analytics and return the request thread
  */
 public class ResultContainer {
     private static final Logger log = Logger.getLogger(ResultContainer.class);
     private CountDownLatch latch;
     private List<Integer> riskScoreList = new ArrayList<>();
+    private int numberOfRules = 0;
 
     public ResultContainer() {
-        int numberOfRules = 0;
+        this.latch = new CountDownLatch(1);
         try {
-            numberOfRules = CarbonServiceValueHolder.getInstance().getTemplateManagerService().getConfigurations(Constants
-                    .TEMPLATE_MANAGER_DOMAIN_NAME).size();
+            this.numberOfRules = ServiceValueHolder.getInstance().getTemplateManagerService().getConfigurations
+                    (Constants.TEMPLATE_MANAGER_DOMAIN_NAME).size();
         } catch (TemplateManagerException e) {
-            log.error("Failed to get number of rules deployed. " +e.getMessage(), e);
+            latch.countDown();
+            log.error("Failed to get number of rules deployed. " + e.getMessage(), e);
         }
-        latch = new CountDownLatch(numberOfRules);
+
     }
 
     /**
-     * Upon receiving a result from riskscore stream this method will update the result list and handle locking
+     * Upon receiving a result from risk score stream this method will update the result list and handle locking
      * mechanisms.
      *
      * @param score risk score for the request
      */
     public void addResult(int score) {
         riskScoreList.add(score);
-        latch.countDown();
-        if (log.isDebugEnabled()) {
-            log.debug("Result is added to the container. Releasing the thread");
+        if (riskScoreList.size() == numberOfRules) {
+            latch.countDown();
+            if (log.isDebugEnabled()) {
+                log.debug("Result is added to the container. Releasing the thread");
+            }
         }
     }
 
@@ -70,7 +74,7 @@ public class ResultContainer {
     public int getRiskScoreDTO() throws InterruptedException {
         latch.await(1, TimeUnit.SECONDS);
         int riskScore = Constants.DEFAULT_RISK_SCORE;
-        if(!riskScoreList.isEmpty()){
+        if (!riskScoreList.isEmpty()) {
             riskScore = Collections.max(riskScoreList);
         }
         return riskScore;

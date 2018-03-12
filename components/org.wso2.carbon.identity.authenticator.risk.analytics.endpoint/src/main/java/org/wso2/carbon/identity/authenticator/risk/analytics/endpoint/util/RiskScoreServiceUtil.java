@@ -46,8 +46,8 @@ public class RiskScoreServiceUtil {
      * @throws RiskScoreServiceConfigurationException exception in configuring the service
      */
     public static ServerConfiguration loadServerConfig() throws RiskScoreServiceConfigurationException {
-        String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
-        String path = carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
+
+        String path = getFilePath();
         OMElement configElement = loadConfigXML(path);
 
         OMElement hostNameElement;
@@ -134,5 +134,15 @@ public class RiskScoreServiceUtil {
                 log.error("Can not shutdown the input stream", e);
             }
         }
+    }
+
+
+    /**
+     * Get the path of the configuration file
+     */
+    public static String getFilePath(){
+        String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
+        String path = carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
+        return path;
     }
 }

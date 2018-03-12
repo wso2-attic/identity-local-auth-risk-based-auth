@@ -17,10 +17,12 @@
  */
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
+import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.testng.PowerMockObjectFactory;
@@ -30,14 +32,17 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.event.template.manager.core.TemplateManagerService;
+import org.wso2.carbon.event.template.manager.core.exception.TemplateManagerException;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.impl.CalculateApiServiceImpl;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.Constants;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtil;
 
-import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -48,24 +53,24 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 /**
- * TODO: Class level comments
+ * Tests the calculate risk score API implementation
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CalculateApiServiceImpl.class, CarbonServiceValueHolder.class, RiskScoreServiceUtil.class, Response
-        .class})
+@PrepareForTest({CalculateApiServiceImpl.class, ServiceValueHolder.class, RiskScoreServiceUtil.class})
+@PowerMockIgnore({"javax.ws.*"})
+
 public class CalculateApiServiceImplTest {
+    private static final Logger log = Logger.getLogger(CalculateApiServiceImplTest.class);
+
 
     @Mock
     private EventStreamService eventStreamService;
 
     @Mock
+    private TemplateManagerService templateManagerService;
+
+    @Mock
     private ServerConfiguration serverConfiguration;
-
-    @Mock
-    private RiskScoreDTO riskScoreDTO;
-
-    @Mock
-    private ResultContainer resultContainer;
 
     @Mock
     private EventPublisher eventPublisher;
@@ -83,47 +88,49 @@ public class CalculateApiServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockStatic(RiskScoreServiceUtil.class);
-        mockStatic(CarbonServiceValueHolder.class);
-        mockStatic(Response.class);
+//        mockStatic(ServiceValueHolder.class);
 
-        CarbonServiceValueHolder carbonServiceValueHolder = mock(CarbonServiceValueHolder.class);
-        when(CarbonServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
-        when(CarbonServiceValueHolder.getInstance().getEventStreamService()).thenReturn(eventStreamService);
+        ServiceValueHolder.getInstance().setEventStreamService(eventStreamService);
+        ServiceValueHolder.getInstance().setTemplateManagerService(templateManagerService);
+//        when(ServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
+//        when(ServiceValueHolder.getInstance().getEventStreamService()).thenReturn(eventStreamService);
+//        when(ServiceValueHolder.getInstance().getTemplateManagerService()).thenReturn(templateManagerService);
 
     }
 
+    @Test
+    public void testResultContainer() throws Exception {
+        Collection configs = mock(Collection.class);
+        when(templateManagerService.getConfigurations(Constants.TEMPLATE_MANAGER_DOMAIN_NAME)).thenReturn(configs);
+        when(configs.size()).thenReturn(2);
 
-//    @Test
-//    public void testGetRiskScoreApiService() throws Exception {
-//        AuthRequestDTO mockAuthRequest = mock(AuthRequestDTO.class);
-////        GetRiskScoreApiServiceImpl mockApiService =mock(GetRiskScoreApiServiceImpl.class);
-////        whenNew(GetRiskScoreApiServiceImpl.class).withNoArguments().thenReturn(mockApiService);
-//        when(mockAuthRequest.getUsername()).thenReturn("pamoda");
-//        when(mockAuthRequest.getUserStoreDomain()).thenReturn("PRIMARY");
-//        when(mockAuthRequest.getTenantDomain()).thenReturn("carbon.super");
-//        when(mockAuthRequest.getRemoteIp()).thenReturn("230.10.10.23");
-//        when(mockAuthRequest.getTimestamp()).thenReturn(String.valueOf(System.currentTimeMillis()));
-////        GetRiskScoreApiService mockApiService = new GetRiskScoreApiServiceImpl();
-////        Assert.assertEquals(mockApiService.getRiskScore(mockAuthRequest).getStatus(), 200);
-//    }
+        ResultContainer container = new ResultContainer();
+        container.addResult(1);
+        container.addResult(1);
+        whenNew(ResultContainer.class).withNoArguments().thenReturn(container);
+
+        when(RiskScoreServiceUtil.loadServerConfig()).thenReturn(serverConfiguration);
+        when(serverConfiguration.getRiskScoreStream()).thenReturn("RiskScore");
+
+        whenNew(EventPublisher.class).withArguments(serverConfiguration).thenReturn(eventPublisher);
+
+        CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
+        RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
+        Assert.assertEquals((int)scoreDTO.getScore(),1);
+//        Assert.assertNotNull(scoreDTO);
+
+    }
 
     @Test
     public void testCalculateApiServiceImpl() throws Exception {
+        ResultContainer resultContainer = mock(ResultContainer.class);
 
         when(RiskScoreServiceUtil.loadServerConfig()).thenReturn(serverConfiguration);
         when(serverConfiguration.getRiskScoreStream()).thenReturn("RiskScore");
 
         whenNew(ResultContainer.class).withNoArguments().thenReturn(resultContainer);
-        whenNew(RiskScoreDTO.class).withNoArguments().thenReturn(riskScoreDTO);
         whenNew(EventPublisher.class).withArguments(serverConfiguration).thenReturn(eventPublisher);
 
-        Response.ResponseBuilder builder = mock(Response.ResponseBuilder.class);
-        Response response = mock(Response.class);
-        when(Response.ok()).thenReturn(builder);
-        when(builder.entity(Matchers.any(RiskScoreDTO.class))).thenReturn(builder);
-        when(builder.build()).thenReturn(response);
-
-        when(response.ok().build()).thenReturn(response);
         CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
         calculateApiService.calculateRiskScore(authRequestDTO);
 
@@ -133,12 +140,50 @@ public class CalculateApiServiceImplTest {
 
     @Test
     public void testLoadConfigurationFailures() throws RiskScoreServiceConfigurationException {
-        when(RiskScoreServiceUtil.loadServerConfig()).thenThrow(new RiskScoreServiceConfigurationException("loading configurations failed"));
+        when(RiskScoreServiceUtil.loadServerConfig()).thenThrow(new RiskScoreServiceConfigurationException("loading " +
+                "configurations failed"));
 
-        try{
+        try {
             CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             Assert.assertNotNull(e);
         }
     }
+
+
+    @Test
+    public void testCountRulesException() throws Exception {
+        when(templateManagerService.getConfigurations(Constants.TEMPLATE_MANAGER_DOMAIN_NAME)).thenThrow(new TemplateManagerException());
+
+        ResultContainer container = new ResultContainer();
+        whenNew(ResultContainer.class).withNoArguments().thenReturn(container);
+
+        when(RiskScoreServiceUtil.loadServerConfig()).thenReturn(serverConfiguration);
+        when(serverConfiguration.getRiskScoreStream()).thenReturn("RiskScore");
+
+        whenNew(EventPublisher.class).withArguments(serverConfiguration).thenReturn(eventPublisher);
+
+        CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
+        RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
+        Assert.assertEquals((int)scoreDTO.getScore(),2);
+//        Assert.assertNotNull(scoreDTO);
+
+    }
+
+//    @Test
+//    public void testInterruptedException() throws Exception {
+//        ResultContainer mock = mock(ResultContainer.class);
+//
+//        whenNew(ResultContainer.class).withNoArguments().thenReturn(mock);
+//        whenNew(EventPublisher.class).withArguments(serverConfiguration).thenReturn(eventPublisher);
+//        when(RiskScoreServiceUtil.loadServerConfig()).thenReturn(serverConfiguration);
+//        when(serverConfiguration.getRiskScoreStream()).thenReturn("RiskScore");
+//        when(mock.getRiskScoreDTO()).thenThrow(new InterruptedException());
+//
+//        CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
+//        calculateApiService.calculateRiskScore(authRequestDTO);
+//        RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
+//        Assert.assertEquals((int)scoreDTO.getScore(),2);
+//    }
+
 }

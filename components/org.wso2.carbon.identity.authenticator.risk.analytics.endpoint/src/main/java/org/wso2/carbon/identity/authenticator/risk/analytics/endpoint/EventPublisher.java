@@ -53,15 +53,15 @@ public class EventPublisher {
         } catch (DataEndpointAgentConfigurationException | DataEndpointException |
                 DataEndpointAuthenticationException | DataEndpointConfigurationException | TransportException e) {
             throw new RiskScoreServiceConfigurationException("Error in initializing binary data-publisher to send " +
-                    "requests to global throttling engine ", e);
+                    "requests to the server ", e);
         }
     }
 
     /**
-     * create an event matching with the stream definition in IS analytics
+     * create and send an event matching with the stream definition in IS analytics
      *
      * @param authRequest authentication request object from the API service
-     * @param streamID    riskscore request streamID
+     * @param streamID    risk score request streamID
      */
     public void sendEvent(AuthRequestDTO authRequest, String streamID) {
 

@@ -33,10 +33,18 @@ import java.util.Map;
 public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     private static final Log log = LogFactory.getLog(GetRiskScoreFunctionImpl.class);
 
+    /**
+     * Get the risk score from the IS analytics
+     *
+     * @param context     JsAuthentication Context
+     * @param propertyMap additional properties
+     * @return risk score for the authentication request
+     */
     @Override
     public int getRiskScore(JsAuthenticationContext context, Map<String, String> propertyMap) {
 
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped(), propertyMap);
+        //if the risk can not be calculated, it is set to the default score of high risk
         int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
         try {
             ConnectionHandler handler = new ConnectionHandler();

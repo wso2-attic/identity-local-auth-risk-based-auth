@@ -44,7 +44,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 /**
- * tests the Function Implementation class
+ * Tests the Function Implementation class
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GetRiskScoreFunctionImpl.class})

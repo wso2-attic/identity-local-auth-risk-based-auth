@@ -23,9 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.event.stream.core.WSO2EventConsumer;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
-
-import java.util.Map;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 
 /**
  * Event consumer class to consume risk score stream. Correlation is made using streamID which is extracted from server
@@ -54,9 +52,7 @@ public class RiskScoreStreamConsumer implements WSO2EventConsumer {
         if (log.isDebugEnabled()) {
             log.debug("Response is received from IS-Analytics");
         }
-        Map<String, ResultContainer> resultContainerMap = CarbonServiceValueHolder.getInstance().getResultContainerMap();
-
-        ResultContainer container = CarbonServiceValueHolder.getInstance().getResultContainerMap()
+        ResultContainer container = ServiceValueHolder.getInstance().getResultContainerMap()
                 .get(String.valueOf(event.getPayloadData()[0]));
         if (container != null) {
             container.addResult((Integer) event.getPayloadData()[1]);

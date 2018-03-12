@@ -18,28 +18,25 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.impl;
 
-
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.CalculateApiService;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.CarbonServiceValueHolder;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisher;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ResultContainer;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.RiskScoreStreamConsumer;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
-
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.event.stream.core.exception.EventStreamConfigurationException;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.CalculateApiService;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisher;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ResultContainer;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.RiskScoreStreamConsumer;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.ws.rs.core.Response;
@@ -58,28 +55,25 @@ public class CalculateApiServiceImpl extends CalculateApiService {
 
     public CalculateApiServiceImpl() {
 
-        eventStreamService = CarbonServiceValueHolder.getInstance().getEventStreamService();
-        resultContainerMap = CarbonServiceValueHolder.getInstance().getResultContainerMap();
+        this.eventStreamService = ServiceValueHolder.getInstance().getEventStreamService();
+        this.resultContainerMap = ServiceValueHolder.getInstance().getResultContainerMap();
 
         try {
             //Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml
             ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
-            riskScoreStreamConsumer = new RiskScoreStreamConsumer(serverConfiguration.getRiskScoreStream());
-            publisher = new EventPublisher(serverConfiguration);
+            this.riskScoreStreamConsumer = new RiskScoreStreamConsumer(serverConfiguration.getRiskScoreStream());
+            this.publisher = new EventPublisher(serverConfiguration);
             ExecutorService executorService = Executors.newFixedThreadPool(1);
             executorService.submit(new StreamSubscriber());
         } catch (RiskScoreServiceConfigurationException e) {
-            log.error("Exception occurred when reading server config at repository/conf/is-analytics-config.xml. " +
-                    "Please check the configurations");
-            throw new RuntimeException("Exception occurred when reading server config at " +
-                    "repository/conf/is-analytics-config.xml. Please check the configurations", e);
+            log.error("Failed to initiate the service. " + e.getMessage(), e);
+            throw new RuntimeException("Exception occurred when configuring Risk Score Calculation Service. ", e);
         }
     }
 
     /**
      * auth request is forwarded to publisher to publish to is-analytics. Then upon calling getResults() request
-     * thread will
-     * block on a Count Down latch until results arrive.
+     * thread will block on a Count Down latch until results arrive.
      *
      * @param authRequest authentication request of risk score calculation
      * @return response

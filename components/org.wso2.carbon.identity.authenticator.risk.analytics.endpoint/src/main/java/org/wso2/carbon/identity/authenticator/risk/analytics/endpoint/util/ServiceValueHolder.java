@@ -29,19 +29,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Holder object to hold references which are needed by multiple classes.
  */
-public class CarbonServiceValueHolder {
-    private static CarbonServiceValueHolder instance;
+public class ServiceValueHolder {
+    private static ServiceValueHolder instance;
     private static EventStreamService eventStreamService;
     private static TemplateManagerService templateManagerService;
     private static Map<String, ResultContainer> resultContainerMap = new ConcurrentHashMap<>();
 
-    private CarbonServiceValueHolder() {
+    private ServiceValueHolder() {
         //DO nothing
     }
 
-    public static CarbonServiceValueHolder getInstance() {
+    public static ServiceValueHolder getInstance() {
         if (instance == null) {
-            instance = new CarbonServiceValueHolder();
+            instance = new ServiceValueHolder();
         }
         return instance;
     }
@@ -55,7 +55,7 @@ public class CarbonServiceValueHolder {
     }
 
     public void setEventStreamService(EventStreamService eventStreamService) {
-        CarbonServiceValueHolder.eventStreamService = eventStreamService;
+        ServiceValueHolder.eventStreamService = eventStreamService;
     }
 
     public Map<String, ResultContainer> getResultContainerMap() {
@@ -63,7 +63,7 @@ public class CarbonServiceValueHolder {
     }
 
     public void setResultContainerMap(Map<String, ResultContainer> resultContainerMap) {
-        CarbonServiceValueHolder.resultContainerMap = resultContainerMap;
+        ServiceValueHolder.resultContainerMap = resultContainerMap;
     }
 
     public TemplateManagerService getTemplateManagerService() {
@@ -75,6 +75,6 @@ public class CarbonServiceValueHolder {
     }
 
     public void setTemplateManagerService(TemplateManagerService templateManagerService) {
-        CarbonServiceValueHolder.templateManagerService = templateManagerService;
+        ServiceValueHolder.templateManagerService = templateManagerService;
     }
 }

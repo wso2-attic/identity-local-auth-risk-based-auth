@@ -24,9 +24,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -46,15 +43,11 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
-import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTOTest;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

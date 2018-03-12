@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
 /**
- * Container class to store configuration information for Global CEP node which is stored in file
+ * Container class to store configuration information of the IS-Analytics stored in file
  * <PRODUCT_HOME>/repository/conf/is-analytics-config.xml
  */
 public class ServerConfiguration {
