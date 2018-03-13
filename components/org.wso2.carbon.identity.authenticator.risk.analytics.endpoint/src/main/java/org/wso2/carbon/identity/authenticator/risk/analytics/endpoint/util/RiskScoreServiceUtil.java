@@ -18,12 +18,12 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 
 import java.io.BufferedInputStream;
@@ -47,8 +47,9 @@ public class RiskScoreServiceUtil {
      */
     public static ServerConfiguration loadServerConfig() throws RiskScoreServiceConfigurationException {
 
-//        String path = getFilePath();
-        String path = "/home/pamoda/programming/is/RiskCal/identity-local-auth-risk/components/org.wso2.carbon.identity.authenticator.risk.analytics.endpoint/target/test-classes/is-analytics-config.xml";
+        String path = getFilePath();
+//        String path = "/home/pamoda/programming/is/RiskCal/identity-local-auth-risk/components/org.wso2.carbon
+// .identity.authenticator.risk.analytics.endpoint/target/test-classes/is-analytics-config.xml"
         OMElement configElement = loadConfigXML(path);
 
         OMElement hostNameElement;
@@ -86,9 +87,8 @@ public class RiskScoreServiceUtil {
         }
         if ((authenticationStreamElement = configElement.getFirstChildWithName(new QName(Constants
                 .AUTHENTICATION_STREAM))) == null) {
-            throw new RiskScoreServiceConfigurationException("Invalid config element with no authentication stream in" +
-                    " " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+            throw new RiskScoreServiceConfigurationException("Invalid config element with no authentication stream in"
+                    + " " +                     Constants.IS_ANALYTICS_CONFIG_XML);
         }
         if ((riskScoreStreamElement = configElement.getFirstChildWithName(new QName(Constants.RISK_SCORE_STREAM))) ==
                 null) {
@@ -141,7 +141,7 @@ public class RiskScoreServiceUtil {
     /**
      * Get the path of the configuration file
      */
-    public static String getFilePath(){
+    public static String getFilePath() {
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
         return carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
     }

@@ -21,69 +21,36 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.utils.CarbonUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 /**
  * Handle the Http connection
  */
 public class ConnectionHandler {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
-    private HttpClientConnectionManager connectionManager;
-    private HttpClient httpClient;
-    private HttpResponse httpResponse;
-    private HttpPost httpPost;
-    private  HttpClientBuilder httpClientBuilder;
-    private  RiskScoreRequestDTO rr;
-
-    /**
-     * Initiates the HttpClient, HttpPost and the Connection Manager
-     *
-     * @throws RiskScoreCalculationException throws the exception if the connection is not established
-     */
-    public ConnectionHandler() throws RiskScoreCalculationException {
-        connectionManager = new BasicHttpClientConnectionManager();
-        httpClient = null;
-        rr = new RiskScoreRequestDTO();
-        try {
-            httpClientBuilder = HttpClientBuilder.create();
-            httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
-                    .loadTrustMaterial(null, new TrustSelfSignedStrategy()).build()));
-            httpClient = httpClientBuilder.build();
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-            throw new RiskScoreCalculationException("Failed to establish a secure connection. ", e);
-        }
-        httpResponse = null;
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(1000)
-                .setConnectTimeout(1000)
-                .setConnectionRequestTimeout(1000)
-                .build();
-        httpPost = new HttpPost(RiskScoreConstants.URL);
-        httpPost.setConfig(requestConfig);
-        httpPost.setHeader("Content-type", "application/json");
-
-    }
 
     /**
      * send the authentication request data to the IS analytics and obtain the risk score
@@ -91,44 +58,90 @@ public class ConnectionHandler {
      * @param requestDTO Authentication context
      * @return riskScore riskScore value for the authentication request
      */
-    public int calculateRiskScore(RiskScoreRequestDTO requestDTO) throws
-            RiskScoreCalculationException {
+    public int calculateRiskScore(RiskScoreRequestDTO requestDTO) throws RiskScoreCalculationException {
+        // Building the http request
+        HttpPost httpPost = new HttpPost(RiskScoreConstants.URL);
+        httpPost.setEntity(createRequestBody(requestDTO));
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(1000)
+                .setConnectTimeout(1000)
+                .setConnectionRequestTimeout(1000)
+                .build();
+        httpPost.setConfig(requestConfig);
+        httpPost.setHeader("Content-type", "application/json");
 
-        ObjectMapper mapper = new ObjectMapper();
+        // Building the http client
+        CloseableHttpClient httpClient;
+        try {
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+            String pathToKeyStore = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Location");
+            String password = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Password");
+            String type = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Type");
+            KeyStore keyStore = KeyStore.getInstance(type);
+            InputStream inputStream = new FileInputStream(pathToKeyStore);
+            keyStore.load(inputStream, password.toCharArray());
+            httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
+                    .loadTrustMaterial(keyStore).build()));
+            httpClient = httpClientBuilder.build();
+        } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException |
+                IOException e) {
+            throw new RiskScoreCalculationException("Failed to establish a secure connection", e);
+        }
+
         int riskScore;
 
-        try {
-            String requestBodyInString = mapper.writeValueAsString(requestDTO);
-            StringEntity requestBody = new StringEntity(requestBodyInString);
-            requestBody.setContentType("application/json");
-            httpPost.setEntity(requestBody);
-
-        } catch (JsonProcessingException | UnsupportedEncodingException e) {
-            throw new RiskScoreCalculationException("Failed to initialize http request body. ", e);
-        }
-
-        //execute the API call and obtain the result
+        // Execute the API call and obtain the result
+        CloseableHttpResponse httpResponse;
         try {
             httpResponse = httpClient.execute(httpPost);
-        } catch (IOException e) {
-            throw new RiskScoreCalculationException("Failed to connect with the server. ", e);
-        } finally {
-            connectionManager.shutdown();
-        }
-        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-            try {
-                String responseString = EntityUtils.toString(httpResponse.getEntity());
-                RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
-                riskScore = riskScoreDTO.getScore();
-            } catch (IOException e) {
-                throw new RiskScoreCalculationException("Failed to get risk score from response. ", e);
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                riskScore = getScoreFromResponse(httpResponse);
+            } else {
+                throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine()
+                        .getStatusCode());
             }
-        } else {
-            throw new RiskScoreCalculationException("HTTP error code : " + httpResponse.getStatusLine().getStatusCode
-                    ());
+        } catch (IOException e) {
+            throw new RiskScoreCalculationException("Failed to connect with the server", e);
+        } finally {
+            try {
+                httpClient.close();
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to close the Http Client. " + e.getMessage(), e);
+                }
+            }
         }
         return riskScore;
     }
 
+    private StringEntity createRequestBody(RiskScoreRequestDTO riskScoreRequestDTO) throws
+            RiskScoreCalculationException {
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity requestBody;
+        try {
+            String requestBodyInString = mapper.writeValueAsString(riskScoreRequestDTO);
+            requestBody = new StringEntity(requestBodyInString);
+            requestBody.setContentType("application/json");
+        } catch (JsonProcessingException | UnsupportedEncodingException e) {
+            throw new RiskScoreCalculationException("Failed to initialize http request body", e);
+        }
+        return requestBody;
+    }
+
+    private int getScoreFromResponse(CloseableHttpResponse response) throws RiskScoreCalculationException {
+        ObjectMapper mapper = new ObjectMapper();
+        int riskScore;
+        try {
+            String responseString = EntityUtils.toString(response.getEntity());
+            RiskScoreDTO riskScoreDTO = mapper.readValue(responseString, RiskScoreDTO.class);
+            riskScore = riskScoreDTO.getScore();
+        } catch (IOException e) {
+            throw new RiskScoreCalculationException("Failed to get risk score from response", e);
+        }
+        return riskScore;
+    }
 }
+
+
 

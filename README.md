@@ -1,4 +1,8 @@
-# adaptive-authentication
+# Risk Based Adaptive Authentication
 
-Register a JS function to obtain the risk score for an authentication request to WSO2 IS during the authentication process flow.
-Risk score is calculated using current request data and historical data stored in WSO2 IS-Analytics
+The Risk Based Adaptive Authentication allows to analyse the risk of an authentication request coming to WSO2 IS. The
+ current authentication request details and the historical login information stored at WSO2 IS-Analytics are considered for the analysis. Based on the risk factor the authentication process is escalated.
+
+## Getting Started
+
+To use the feature [Configure Risk Based Adaptive Authentication](docs/config.md) in WSO2 IS and WSO2 IS-Analytics.

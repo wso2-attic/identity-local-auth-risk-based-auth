@@ -47,6 +47,7 @@ public class ServiceValueHolder {
     }
 
     public EventStreamService getEventStreamService() {
+
         if (eventStreamService == null) {
             eventStreamService = (EventStreamService) PrivilegedCarbonContext.getThreadLocalCarbonContext()
                     .getOSGiService(EventStreamService.class, null);

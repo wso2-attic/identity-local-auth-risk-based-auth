@@ -41,18 +41,21 @@ import org.testng.IObjectFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
+import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.utils.CarbonUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.security.KeyStore;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -64,7 +67,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ConnectionHandler.class, EntityUtils.class, HttpClientBuilder.class})
+@PrepareForTest({ConnectionHandler.class, EntityUtils.class, HttpClientBuilder.class, CarbonUtils.class})
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class ConnectionHandlerTest {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
@@ -101,15 +104,26 @@ public class ConnectionHandlerTest {
         initMocks(this);
         StringEntity requestBody = mock(StringEntity.class);
         mockStatic(HttpClientBuilder.class);
+        mockStatic(CarbonUtils.class);
+        mockStatic(KeyStore.class);
         PowerMockito.spy(HttpClientBuilder.class);
         HttpClientBuilder builder = mock(HttpClientBuilder.class);
+        ServerConfiguration serverConfiguration = mock(ServerConfiguration.class);
+        FileInputStream inputStream = mock(FileInputStream.class);
 
         PowerMockito.when(HttpClientBuilder.class, "create").thenReturn(builder);
+        PowerMockito.when(CarbonUtils.class, "getServerConfiguration").thenReturn(serverConfiguration);
+
         when(builder.build()).thenReturn(mockHttpClient);
         when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
+        when(serverConfiguration.getFirstProperty("Security.KeyStore.Location")).thenReturn("path");
+        when(serverConfiguration.getFirstProperty("Security.KeyStore.Password")).thenReturn("password");
+        when(serverConfiguration.getFirstProperty("Security.KeyStore.Type")).thenReturn("JKS");
+
         whenNew(ObjectMapper.class).withNoArguments().thenReturn(mapper);
         whenNew(StringEntity.class).withAnyArguments().thenReturn(requestBody);
         whenNew(HttpPost.class).withAnyArguments().thenReturn(mockHttpPost);
+        whenNew(FileInputStream.class).withAnyArguments().thenReturn((FileInputStream) inputStream);
         connectionHandler = new ConnectionHandler();
 
     }
@@ -139,7 +153,6 @@ public class ConnectionHandlerTest {
         log.info("Testing response converting error");
 
         HttpEntity httpEntity = mock(HttpEntity.class);
-        RiskScoreDTO riskScore = mock(RiskScoreDTO.class);
 
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
         when(mockStatusLine.getStatusCode()).thenReturn(200);
@@ -151,7 +164,7 @@ public class ConnectionHandlerTest {
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
         } catch (RiskScoreCalculationException e) {
-            Assert.assertEquals(e.getMessage(), "Failed to get risk score from response. ");
+            Assert.assertEquals(e.getMessage(), "Failed to get risk score from response");
         }
     }
 
@@ -178,7 +191,7 @@ public class ConnectionHandlerTest {
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
         } catch (RiskScoreCalculationException e) {
-            Assert.assertEquals(e.getMessage(), "Failed to connect with the server. ");
+            Assert.assertEquals(e.getMessage(), "Failed to connect with the server");
         }
     }
 
@@ -192,7 +205,7 @@ public class ConnectionHandlerTest {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
             Assert.fail("Risk Calculation failed");
         } catch (RiskScoreCalculationException e) {
-            Assert.assertEquals(e.getMessage(), "Failed to connect with the server. ");
+            Assert.assertEquals(e.getMessage(), "Failed to connect with the server");
         }
     }
 

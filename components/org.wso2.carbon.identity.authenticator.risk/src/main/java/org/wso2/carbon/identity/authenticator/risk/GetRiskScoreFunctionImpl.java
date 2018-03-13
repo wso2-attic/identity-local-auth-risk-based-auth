@@ -42,9 +42,8 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
      */
     @Override
     public int getRiskScore(JsAuthenticationContext context, Map<String, String> propertyMap) {
-
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped(), propertyMap);
-        //if the risk can not be calculated, it is set to the default score of high risk
+        // If the risk can not be calculated, it is set to the default score of high risk.
         int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
         try {
             ConnectionHandler handler = new ConnectionHandler();
