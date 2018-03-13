@@ -47,7 +47,8 @@ public class RiskScoreServiceUtil {
      */
     public static ServerConfiguration loadServerConfig() throws RiskScoreServiceConfigurationException {
 
-        String path = getFilePath();
+//        String path = getFilePath();
+        String path = "/home/pamoda/programming/is/RiskCal/identity-local-auth-risk/components/org.wso2.carbon.identity.authenticator.risk.analytics.endpoint/target/test-classes/is-analytics-config.xml";
         OMElement configElement = loadConfigXML(path);
 
         OMElement hostNameElement;
@@ -142,7 +143,6 @@ public class RiskScoreServiceUtil {
      */
     public static String getFilePath(){
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
-        String path = carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
-        return path;
+        return carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
     }
 }

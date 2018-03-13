@@ -50,7 +50,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({EventPublisher.class})
 public class EventPublisherTest {
 
-    @Mock
     private ServerConfiguration serverConfiguration;
 
     @Mock
@@ -64,12 +63,8 @@ public class EventPublisherTest {
     @BeforeMethod
     void setUp() {
         initMocks(this);
-        when(serverConfiguration.getHostname()).thenReturn("localhost");
-        when(serverConfiguration.getBinaryTCPPort()).thenReturn("9612");
-        when(serverConfiguration.getBinarySSLPort()).thenReturn("9712");
-        when(serverConfiguration.getUsername()).thenReturn("admin");
-        when(serverConfiguration.getPassword()).thenReturn("admin");
-
+        serverConfiguration = new ServerConfiguration("localhost", "9612", "9712", "9444", "admin", "admin",
+                "RiskScoreRequest", "RiskScorePerRule");
     }
 
     @Test

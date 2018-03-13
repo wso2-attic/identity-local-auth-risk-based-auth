@@ -20,6 +20,8 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.testng.PowerMockObjectFactory;
@@ -31,7 +33,20 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConf
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -41,21 +56,42 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  * Test RiskScore Service Util class
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({RiskScoreServiceUtil.class, System.class})
+@PrepareForTest({})
 
 public class RiskScoreServiceUtilTest {
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
     }
+
     @Test
     public void testFileLoad() throws RiskScoreServiceConfigurationException {
-        mockStatic(RiskScoreServiceUtil.class);
-        when(RiskScoreServiceUtil.getFilePath()).thenReturn("/is-analytics-config.xml");
-
-        ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
-
-
+//        PowerMockito.spy(RiskScoreServiceUtil.class);
+//        ClassLoader loader = Test.class.getClassLoader();
+//
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource(Constants.IS_ANALYTICS_CONFIG_XML).getPath();
+//        given(RiskScoreServiceUtil.getFilePath()).willReturn(path);
+//
+//        BufferedInputStream inputStream = null;
+//        mockStatic(XMLInputFactory.class);
+//        XMLInputFactory xmlInputFactory = mock(XMLInputFactory.class);
+//        when(XMLInputFactory.newInstance()).thenReturn(xmlInputFactory);
+//
+//        when(XMLInputFactory.newInstance()).thenReturn(XMLInputFactory);
+//        try {
+//            inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
+//
+//            XMLStreamReader parser = XMLInputFactory.newInstance().
+//
+//                    createXMLStreamReader(inputStream);
+//            ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (XMLStreamException e) {
+//            e.printStackTrace();
+//        }
+        RiskScoreServiceUtil.loadServerConfig();
     }
 }
 

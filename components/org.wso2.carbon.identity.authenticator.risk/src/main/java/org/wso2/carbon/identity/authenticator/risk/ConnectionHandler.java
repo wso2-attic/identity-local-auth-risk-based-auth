@@ -53,6 +53,8 @@ public class ConnectionHandler {
     private HttpClient httpClient;
     private HttpResponse httpResponse;
     private HttpPost httpPost;
+    private  HttpClientBuilder httpClientBuilder;
+    private  RiskScoreRequestDTO rr;
 
     /**
      * Initiates the HttpClient, HttpPost and the Connection Manager
@@ -62,8 +64,9 @@ public class ConnectionHandler {
     public ConnectionHandler() throws RiskScoreCalculationException {
         connectionManager = new BasicHttpClientConnectionManager();
         httpClient = null;
+        rr = new RiskScoreRequestDTO();
         try {
-            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            httpClientBuilder = HttpClientBuilder.create();
             httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
                     .loadTrustMaterial(null, new TrustSelfSignedStrategy()).build()));
             httpClient = httpClientBuilder.build();
@@ -80,12 +83,6 @@ public class ConnectionHandler {
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-type", "application/json");
 
-    }
-
-    public ConnectionHandler(HttpClient httpClient, HttpPost httpPost) {
-        connectionManager = new BasicHttpClientConnectionManager();
-        this.httpClient = httpClient;
-        this.httpPost = httpPost;
     }
 
     /**
