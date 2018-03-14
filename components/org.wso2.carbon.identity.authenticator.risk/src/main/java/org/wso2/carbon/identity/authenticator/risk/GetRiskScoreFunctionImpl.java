@@ -24,6 +24,7 @@ import org.wso2.carbon.identity.application.authentication.framework.config.mode
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 
 import java.util.Map;
 
@@ -43,11 +44,22 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     @Override
     public int getRiskScore(JsAuthenticationContext context, Map<String, String> propertyMap) {
         RiskScoreRequestDTO requestDTO = new RiskScoreRequestDTO(context.getWrapped(), propertyMap);
+
         // If the risk can not be calculated, it is set to the default score of high risk.
         int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
+
+        // Check whether Analytics is enabled in the identity.xml
+        Boolean isEnabled = Boolean.parseBoolean(IdentityUtil.getProperty("Analytics.Enabled"));
+
         try {
-            ConnectionHandler handler = new ConnectionHandler();
-            riskScore = handler.calculateRiskScore(requestDTO);
+            if (isEnabled) {
+                ConnectionHandler handler = new ConnectionHandler();
+                riskScore = handler.calculateRiskScore(requestDTO);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Risk score is not calculated. Analytics is disabled.");
+                }
+            }
         } catch (RiskScoreCalculationException e) {
             log.warn("Could not calculate risk score. " + e.getMessage(), e);
 

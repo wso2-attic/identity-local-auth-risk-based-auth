@@ -34,8 +34,10 @@ import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculatio
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.utils.CarbonUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +62,8 @@ public class ConnectionHandler {
      */
     public int calculateRiskScore(RiskScoreRequestDTO requestDTO) throws RiskScoreCalculationException {
         // Building the http request
-        HttpPost httpPost = new HttpPost(RiskScoreConstants.URL);
+        String baseURL = IdentityUtil.getProperty("Analytics.DASServerURL");
+        HttpPost httpPost = new HttpPost(baseURL+RiskScoreConstants.RISK_SCORE_SERVICE_PATH);
         httpPost.setEntity(createRequestBody(requestDTO));
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(1000)

@@ -46,11 +46,11 @@ import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculatio
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.util.RiskScoreConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.utils.CarbonUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.security.KeyStore;
@@ -67,7 +67,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ConnectionHandler.class, EntityUtils.class, HttpClientBuilder.class, CarbonUtils.class})
+@PrepareForTest({ConnectionHandler.class, EntityUtils.class, HttpClientBuilder.class, CarbonUtils.class, IdentityUtil
+        .class})
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class ConnectionHandlerTest {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
@@ -106,6 +107,7 @@ public class ConnectionHandlerTest {
         mockStatic(HttpClientBuilder.class);
         mockStatic(CarbonUtils.class);
         mockStatic(KeyStore.class);
+        mockStatic(IdentityUtil.class);
         PowerMockito.spy(HttpClientBuilder.class);
         HttpClientBuilder builder = mock(HttpClientBuilder.class);
         ServerConfiguration serverConfiguration = mock(ServerConfiguration.class);
@@ -113,6 +115,8 @@ public class ConnectionHandlerTest {
 
         PowerMockito.when(HttpClientBuilder.class, "create").thenReturn(builder);
         PowerMockito.when(CarbonUtils.class, "getServerConfiguration").thenReturn(serverConfiguration);
+//        PowerMockito.when(IdentityUtil.class, "getProperty", "Analytics.ISAnalyticsServerURL").thenReturn
+//                ("https://localhost:9444");
 
         when(builder.build()).thenReturn(mockHttpClient);
         when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
@@ -198,7 +202,7 @@ public class ConnectionHandlerTest {
     @Test
     public void testConnectionError() throws Exception {
         log.info("Testing connection failure");
-        whenNew(HttpPost.class).withArguments(RiskScoreConstants.URL).thenReturn(mockHttpPost);
+        whenNew(HttpPost.class).withArguments(RiskScoreConstants.RISK_SCORE_SERVICE_PATH).thenReturn(mockHttpPost);
 
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
         try {
