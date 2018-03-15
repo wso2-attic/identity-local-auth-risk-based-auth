@@ -17,8 +17,7 @@
     <description>Analyse the risk of authentication requests</description>
     <scenarios>
         <scenario type="LocationBasedRiskRule">
-            <description>Configure the number of days to be considered when idenitfying the user's usual login
-                location
+            <description>Calculate the risk based on login location
             </description>
             <templates>
                 <template type="realtime">
@@ -64,14 +63,14 @@
             <parameters>
                 <parameter name="numberOfDays" type="int">
                     <displayName>Number of days</displayName>
-                    <description>Number of days to be considered</description>
+                    <description>Number of days to consider in the user login history</description>
                     <defaultValue>30</defaultValue>
                 </parameter>
             </parameters>
         </scenario>
 
         <scenario type="TimeBasedRiskRule">
-            <description>Configure the time period when authentication requests are accepted without a risk
+            <description>Define a time of day during which the logins are allowed without a risk
             </description>
             <templates>
                 <template type="realtime">
@@ -118,8 +117,7 @@
         </scenario>
 
         <scenario type="IpBasedRiskRule">
-            <description>Configure an IP range from which the incoming authentication requests are accepted without a
-                risk
+            <description>Define a range of IP addresses within which the logins are allowed without a risk
             </description>
             <templates>
                 <template type="realtime">

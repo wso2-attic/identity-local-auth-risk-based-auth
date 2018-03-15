@@ -40,7 +40,7 @@ public class RiskScoreServiceUtil {
     private static final Log log = LogFactory.getLog(RiskScoreServiceUtil.class);
 
     /**
-     * Read server config file at repository/conf/is-analytics-config.xml and returns a POJO representing that.
+     * Read server config file at repository/conf/risk-calculator-config.xml and returns a POJO representing that.
      *
      * @return POJO representing the configuration file
      * @throws RiskScoreServiceConfigurationException exception in configuring the service
@@ -48,8 +48,6 @@ public class RiskScoreServiceUtil {
     public static ServerConfiguration loadServerConfig() throws RiskScoreServiceConfigurationException {
 
         String path = getFilePath();
-//        String path = "/home/pamoda/programming/is/RiskCal/identity-local-auth-risk/components/org.wso2.carbon
-// .identity.authenticator.risk.analytics.endpoint/target/test-classes/is-analytics-config.xml"
         OMElement configElement = loadConfigXML(path);
 
         OMElement hostNameElement;
@@ -63,37 +61,37 @@ public class RiskScoreServiceUtil {
 
         if ((hostNameElement = configElement.getFirstChildWithName(new QName(Constants.HOST_NAME))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no host name in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((tcpPortElement = configElement.getFirstChildWithName(new QName(Constants.TCP_PORT))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no TCP port in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((httpsPortElement = configElement.getFirstChildWithName(new QName(Constants.HTTPS_PORT))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no HTTPS port in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((sslPortElement = configElement.getFirstChildWithName(new QName(Constants.SSL_PORT))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no SSL port in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((usernameElement = configElement.getFirstChildWithName(new QName(Constants.USERNAME))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no username in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((passwordElement = configElement.getFirstChildWithName(new QName(Constants.PASSWORD))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no password in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((authenticationStreamElement = configElement.getFirstChildWithName(new QName(Constants
                 .AUTHENTICATION_STREAM))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no authentication stream in"
-                    + " " +                     Constants.IS_ANALYTICS_CONFIG_XML);
+                    + " " +                     Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((riskScoreStreamElement = configElement.getFirstChildWithName(new QName(Constants.RISK_SCORE_STREAM))) ==
                 null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no riskscore stream in " +
-                    Constants.IS_ANALYTICS_CONFIG_XML);
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
         }
 
 
@@ -143,6 +141,6 @@ public class RiskScoreServiceUtil {
      */
     public static String getFilePath() {
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
-        return carbonHome + File.separator + Constants.IS_ANALYTICS_CONFIG_XML;
+        return carbonHome + File.separator + Constants.RISK_CALCULATOR_CONFIG_XML;
     }
 }

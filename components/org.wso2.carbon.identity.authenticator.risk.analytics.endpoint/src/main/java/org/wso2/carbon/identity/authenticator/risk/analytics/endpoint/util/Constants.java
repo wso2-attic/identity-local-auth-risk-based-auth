@@ -24,7 +24,7 @@ public class Constants {
         //avoids initialization
     }
 
-    public static final String IS_ANALYTICS_CONFIG_XML = "is-analytics-config.xml";
+    public static final String RISK_CALCULATOR_CONFIG_XML = "risk-calculator-config.xml";
     public static final String HOST_NAME = "hostName";
     public static final String TCP_PORT = "binaryTCPPort";
     public static final String SSL_PORT = "binarySSLPort";

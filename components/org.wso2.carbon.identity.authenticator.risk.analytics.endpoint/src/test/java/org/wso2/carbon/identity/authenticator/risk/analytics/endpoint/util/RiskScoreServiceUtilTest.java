@@ -70,7 +70,7 @@ public class RiskScoreServiceUtilTest {
 //        ClassLoader loader = Test.class.getClassLoader();
 //
 //        ClassLoader classLoader = getClass().getClassLoader();
-//        String path = classLoader.getResource(Constants.IS_ANALYTICS_CONFIG_XML).getPath();
+//        String path = classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML).getPath();
 //        given(RiskScoreServiceUtil.getFilePath()).willReturn(path);
 //
 //        BufferedInputStream inputStream = null;
