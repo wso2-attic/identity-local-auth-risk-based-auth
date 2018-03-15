@@ -16,7 +16,7 @@
 <domain name="RiskScoreCalculator">
     <description>Analyse the risk of authentication requests</description>
     <scenarios>
-        <scenario type="ConfigureLocationBasedRiskRule">
+        <scenario type="LocationBasedRiskRule">
             <description>Configure the number of days to be considered when idenitfying the user's usual login
                 location
             </description>
@@ -70,7 +70,7 @@
             </parameters>
         </scenario>
 
-        <scenario type="ConfigureTimeBasedRiskRule">
+        <scenario type="TimeBasedRiskRule">
             <description>Configure the time period when authentication requests are accepted without a risk
             </description>
             <templates>
@@ -91,29 +91,33 @@
                     define stream RiskScorePerRule (eventId string, riskscore int);
 
                     from RiskScoreRequest
-                    select eventId, ifThenElse( (timestamp is null),2 , ifThenElse( (time:extract(timestamp,'HOUR') < $allowedTimeStart OR time:extract(timestamp,'HOUR') > $allowedTimeEnd), 1, 0 )) as riskscore
+                    select eventId, ifThenElse( (timestamp is null),2 , ifThenElse( (time:extract(timestamp,'HOUR') <convert(str:substr("$allowedTimeStart" , 0 ,2),'int') OR time:extract(timestamp,'HOUR') > convert(str:substr("$allowedTimeEnd",0,2),'int') ), 1, 0 )) as riskscore
                     insert into RiskScorePerRule;
 
 				]]>
                 </template>
             </templates>
             <parameters>
-                <parameter name="allowedTimeStart" type="int">
+                <parameter name="allowedTimeStart" type="string">
                     <displayName>Start time</displayName>
-                    <description>Start time of the allowed time period in hours</description>
-                    <defaultValue>06</defaultValue>
-                    <options>00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23</options>
+                    <description>Start time in 24 hours</description>
+                    <defaultValue>06:00</defaultValue>
+                    <options>00:00,01:00,02:00,03:00,04:00,05:00,06:00,
+                        07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,
+                        15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00</options>
                 </parameter>
-                <parameter name="allowedTimeEnd" type="int">
+                <parameter name="allowedTimeEnd" type="string">
                     <displayName>End time</displayName>
-                    <description>End time of the allowed time period in hours</description>
-                    <defaultValue>20</defaultValue>
-                    <options>00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23</options>
+                    <description>End time in 24 hours</description>
+                    <defaultValue>20:00</defaultValue>
+                    <options>00:00,01:00,02:00,03:00,04:00,05:00,06:00,
+                        07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,
+                        15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00</options>
                 </parameter>
             </parameters>
         </scenario>
 
-        <scenario type="ConfigureIpBasedRiskRule">
+        <scenario type="IpBasedRiskRule">
             <description>Configure an IP range from which the incoming authentication requests are accepted without a
                 risk
             </description>
