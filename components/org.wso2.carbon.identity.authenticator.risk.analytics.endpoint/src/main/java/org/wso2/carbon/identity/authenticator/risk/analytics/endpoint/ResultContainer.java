@@ -74,7 +74,7 @@ public class ResultContainer {
     public int getRiskScoreDTO() throws InterruptedException {
         latch.await(1, TimeUnit.SECONDS);
         int riskScore = Constants.DEFAULT_RISK_SCORE;
-        if (riskScoreList.size() == numberOfRules) {
+        if (numberOfRules > 0 && riskScoreList.size() == numberOfRules) {
             riskScore = Collections.max(riskScoreList);
         }
         return riskScore;
