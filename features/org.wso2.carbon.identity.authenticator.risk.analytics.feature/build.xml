@@ -17,14 +17,44 @@
   ~ under the License.
   -->
 
-<project name="create-capps" default="zip" basedir="resources">
-    <property name="target_dir" value="target"/>
+<project name="create-capps" default="zip">
     <property name="capp_base" value="resources/capp"/>
     <property name="risk_calculator_capp" value="risk_calculator"/>
 
-    <target name="zip">
-        <zip destfile="${target_dir}/${risk_calculator_capp}.car">
+    <property name="artifacts_zip_name" value="risk_based_authentication_artifacts"/>
+    <property name="function_target_dir"
+              value="../../components/org.wso2.carbon.identity.authenticator.risk/target"/>
+    <property name="webapp_target_dir"
+              value="../../components/org.wso2.carbon.identity.authenticator.risk.analytics.endpoint/target"/>
+
+    <property name="feature_resources_dir" value="resources"/>
+    <property name="feature_target_dir" value="target"/>
+    <property name="capp_base" value="resources/capp"/>
+
+    <target name="capp">
+        <zip destfile="${feature_target_dir}/${risk_calculator_capp}.car">
             <zipfileset dir="${capp_base}"/>
         </zip>
+    </target>
+
+    <target name="zip" depends="capp">
+        <mkdir dir="${feature_target_dir}/${artifacts_zip_name}/is"/>
+        <copy todir="${feature_target_dir}/${artifacts_zip_name}/is">
+            <fileset file="${function_target_dir}/org.wso2.carbon.identity.authenticator.risk-1.0.0-SNAPSHOT.jar"/>
+        </copy>
+        <mkdir dir="${feature_target_dir}/${artifacts_zip_name}/is-analytics"/>
+
+        <copy todir="${feature_target_dir}/${artifacts_zip_name}/is-analytics">
+            <fileset file="${webapp_target_dir}/api#authentication#adaptive#risk.war"/>
+            <fileset file="${feature_target_dir}/${risk_calculator_capp}.car"/>
+            <fileset file="${feature_resources_dir}/templates/risk-calculator-rules.xml"/>
+            <fileset file="${feature_resources_dir}/configurations/risk-calculator-config.xml"/>
+        </copy>
+
+        <zip destfile="${feature_target_dir}/${artifacts_zip_name}.zip">
+            <zipfileset dir="${feature_target_dir}/${artifacts_zip_name}"/>
+        </zip>
+
+        <delete dir="${feature_target_dir}/${artifacts_zip_name}"/>
     </target>
 </project>
