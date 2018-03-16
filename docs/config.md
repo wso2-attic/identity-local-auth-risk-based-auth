@@ -7,7 +7,8 @@
 
 Follow the steps to enable Risk Based Adaptive Authentication Feature in WSO2 IS.
 
-1. Copy org.wso2.carbon.identity.authenticator.risk-1.0.0-SNAPSHOT.jar into 
+1. Download the artifacts from [WSO2 Store](https://store.wso2.com/store/assets/isconnector/list)
+2. Copy `<RISK_BASED_AUTHENTICATION_ARTIFACTS/is/org.wso2.carbon.identity.authenticator.risk-1.0.0-SNAPSHOT.jar` into 
 `<IS_HOME>/repository/components/dropins/` directory
 2. Add following configuration information in `identity.xml` file at `<IS_HOME>/repository/conf/identity/` directory
     ```xml
@@ -71,13 +72,16 @@ Authentication Configuration for the service provider.
 Follow the steps to configure WSO2 IS Analytics to analyze the risk of authentication requests
 
 ### Setting up
-1. Configure IS Analytics for Geolocation Statics. Steps are given in this [documentation.](https://docs.wso2.com/display/IS550/Using+Geolocation+Based+Statistics)
-2. Copy the domain template `risk-calculator-rules.xml` file to 
+
+1. Download the artifacts from [WSO2 Store](https://store.wso2.com/store/assets/isconnector/list)
+1. Configure IS Analytics for Geolocation Statics. Steps are given in this [documentation.](https://docs.wso2
+.com/display/IS550/Using+Geolocation+Based+Statistics)
+2. Copy the domain template `<RISK_BASED_AUTHENTICATION_ARTIFACTS/is-analytics/risk-calculator-rules.xml` file to 
 `<IS_ANALYTICS_HOME>/repository/conf/template-manager/domain-template/` directory.
-3. Copy `risk-calculator-config.xml` file to `<IS_ANALYTICS_HOME>/repository/conf/` directory.
+3. Copy `<RISK_BASED_AUTHENTICATION_ARTIFACTS/is-analytics/risk-calculator-config.xml` file to `<IS_ANALYTICS_HOME>/repository/conf/` directory.
 4. Start the IS Analytics server and login
 5. [Install](https://docs.wso2.com/display/DAS310/Packaging+Artifacts+as+a+C-App+Archive#PackagingArtifactsasaC-AppArchive-DeployingacAppDeployingaC-App) Risk Calculator Carbon App `risk_calculator.car` in the server.
-6. Copy the `api#authentication#adaptive#risk.war` file to `<IS_ANALYTICS_HOME>/repository/deployment/server/webapps/` directory.
+6. Copy the `<RISK_BASED_AUTHENTICATION_ARTIFACTS/is-analytics/api#authentication#adaptive#risk.war` file to `<IS_ANALYTICS_HOME>/repository/deployment/server/webapps/` directory.
 
 ### Running the feature
 
