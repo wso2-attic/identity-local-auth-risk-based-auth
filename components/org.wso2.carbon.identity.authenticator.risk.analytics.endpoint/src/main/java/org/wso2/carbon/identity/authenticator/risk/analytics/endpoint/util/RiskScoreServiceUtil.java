@@ -90,7 +90,7 @@ public class RiskScoreServiceUtil {
         }
         if ((riskScoreStreamElement = configElement.getFirstChildWithName(new QName(Constants.RISK_SCORE_STREAM))) ==
                 null) {
-            throw new RiskScoreServiceConfigurationException("Invalid config element with no riskscore stream in " +
+            throw new RiskScoreServiceConfigurationException("Invalid config element with no risk score stream in " +
                     Constants.RISK_CALCULATOR_CONFIG_XML);
         }
 

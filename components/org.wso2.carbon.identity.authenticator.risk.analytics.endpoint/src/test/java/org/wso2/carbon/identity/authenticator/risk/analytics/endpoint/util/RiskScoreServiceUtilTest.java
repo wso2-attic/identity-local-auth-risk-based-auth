@@ -18,80 +18,228 @@
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
 
+import org.junit.Assert;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.testng.PowerMockObjectFactory;
-import org.testng.IObjectFactory;
-import org.testng.annotations.ObjectFactory;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisher;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConfiguration;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * Test RiskScore Service Util class
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({})
-
+@PowerMockIgnore({"javax.xml.stream.XMLInputFactory", "javax.xml.transform.Transformer"})
 public class RiskScoreServiceUtilTest {
-    @ObjectFactory
-    public IObjectFactory getObjectFactory() {
-        return new PowerMockObjectFactory();
+
+    private String pathToConfigFileLocation;
+
+    @BeforeMethod
+    public void setUp() {
+        initMocks(this);
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML).getPath();
+        int index = path.lastIndexOf(File.separator);
+        pathToConfigFileLocation = path.substring(0, index);
+
+    }
+
+
+    @Test
+    public void testFileLoad() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
+        Assert.assertNotNull(serverConfiguration);
     }
 
     @Test
-    public void testFileLoad() throws RiskScoreServiceConfigurationException {
-//        PowerMockito.spy(RiskScoreServiceUtil.class);
-//        ClassLoader loader = Test.class.getClassLoader();
-//
-//        ClassLoader classLoader = getClass().getClassLoader();
-//        String path = classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML).getPath();
-//        given(RiskScoreServiceUtil.getFilePath()).willReturn(path);
-//
-//        BufferedInputStream inputStream = null;
-//        mockStatic(XMLInputFactory.class);
-//        XMLInputFactory xmlInputFactory = mock(XMLInputFactory.class);
-//        when(XMLInputFactory.newInstance()).thenReturn(xmlInputFactory);
-//
-//        when(XMLInputFactory.newInstance()).thenReturn(XMLInputFactory);
-//        try {
-//            inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
-//
-//            XMLStreamReader parser = XMLInputFactory.newInstance().
-//
-//                    createXMLStreamReader(inputStream);
-//            ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();
-//        }
-//        RiskScoreServiceUtil.loadServerConfig();
+    public void testMissingHostName() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.HOST_NAME);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no host name in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.HOST_NAME, "localhost");
     }
-}
 
+    @Test
+    public void testMissingTCPport() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.TCP_PORT);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no TCP port in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.TCP_PORT, "9612");
+    }
+
+    @Test
+    public void testMissingHTTPSport() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.HTTPS_PORT);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no HTTPS port in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.HTTPS_PORT, "9444");
+    }
+
+    @Test
+    public void testMissingSSLport() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.SSL_PORT);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no SSL port in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.SSL_PORT, "9712");
+    }
+
+    @Test
+    public void testMissingUserName() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.USERNAME);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no username in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.USERNAME, "admin");
+    }
+
+    @Test
+    public void testMissingPassword() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.PASSWORD);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no password in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.PASSWORD, "admin");
+    }
+
+    @Test
+    public void testMissingAuthStream() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.AUTHENTICATION_STREAM);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no authentication stream in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.AUTHENTICATION_STREAM, "org.wso2.is.analytics.stream.RiskScoreRequest:1.0.0");
+    }
+
+    @Test
+    public void testMissingRiskScoreStream() throws Exception {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+        deleteNode(Constants.RISK_SCORE_STREAM);
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertNotNull(e);
+            Assert.assertEquals(e.getMessage(), "Invalid config element with no risk score stream in " +
+                    Constants.RISK_CALCULATOR_CONFIG_XML);
+        }
+        appendNode(Constants.RISK_SCORE_STREAM, "org.wso2.is.analytics.stream.RiskScorePerRule:1.0.0");
+    }
+
+
+    @Test(expectedExceptions = RiskScoreServiceConfigurationException.class)
+    public void testFileNotFoundException() throws RiskScoreServiceConfigurationException {
+        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, "null");
+        try {
+            RiskScoreServiceUtil.loadServerConfig();
+        } catch (RiskScoreServiceConfigurationException e) {
+            Assert.assertEquals(e.getCause().getClass(), FileNotFoundException.class);
+            throw e;
+        }
+    }
+
+//    @Test
+//    public void testXMLException() throws Exception {
+//        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
+//
+//        appendNode("error", "</error>");
+//        RiskScoreServiceUtil.loadServerConfig();
+//
+//    }
+
+    private void deleteNode(String nodeName) throws Exception {
+        String path = pathToConfigFileLocation + File.separator + Constants.RISK_CALCULATOR_CONFIG_XML;
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(path);
+        Node CEPConfig = document.getElementsByTagName("CEPConfig").item(0);
+        NodeList nodes = CEPConfig.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node element = nodes.item(i);
+            if (nodeName.equals(element.getNodeName())) {
+                CEPConfig.removeChild(element);
+            }
+        }
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource domSource = new DOMSource(document);
+        StreamResult streamResult = new StreamResult(new File(path).getPath());
+        transformer.transform(domSource, streamResult);
+
+
+    }
+
+    private void appendNode(String nodeName, String value) throws Exception {
+        String path = pathToConfigFileLocation + File.separator + Constants.RISK_CALCULATOR_CONFIG_XML;
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(path);
+        Node CEPConfig = document.getElementsByTagName("CEPConfig").item(0);
+        Element element = document.createElement(nodeName);
+        element.appendChild(document.createTextNode(value));
+        CEPConfig.appendChild(element);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource domSource = new DOMSource(document);
+        StreamResult streamResult = new StreamResult(new File(path).getPath());
+        transformer.transform(domSource, streamResult);
+    }
+
+
+}

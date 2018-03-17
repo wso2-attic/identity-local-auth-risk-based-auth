@@ -3,7 +3,6 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.*;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.*;
 
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.ErrorModelDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
 

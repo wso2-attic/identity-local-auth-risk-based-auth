@@ -21,7 +21,7 @@
 <suite name="Risk-Score-Calculator-test-suite">
     <test name="risk-score-calculator" parallel="false">
         <classes>
-            <!--<class name="identity.anlaytics.riskscore.RiskScoreTest"/>-->
+            <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtilTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisherTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.CalculateApiServiceImplTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.RiskScoreStreamConsumerTest"/>

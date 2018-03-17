@@ -6,7 +6,6 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.factories.
 
 import io.swagger.annotations.ApiParam;
 
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.ErrorModelDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
 
@@ -33,9 +32,7 @@ public class CalculateApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "", notes = "Method to obtain the calculated risk score an authentication request", response = RiskScoreDTO.class)
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Risk Score"),
-        
-        @io.swagger.annotations.ApiResponse(code = 500, message = "unexpected error") })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Risk Score") })
 
     public Response calculateRiskScore(@ApiParam(value = "authentication request by the user" ,required=true ) AuthRequestDTO authRequest)
     {

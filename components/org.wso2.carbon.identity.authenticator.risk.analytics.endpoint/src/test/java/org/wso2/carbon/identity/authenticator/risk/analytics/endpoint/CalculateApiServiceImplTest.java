@@ -88,13 +88,9 @@ public class CalculateApiServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockStatic(RiskScoreServiceUtil.class);
-//        mockStatic(ServiceValueHolder.class);
 
         ServiceValueHolder.getInstance().setEventStreamService(eventStreamService);
         ServiceValueHolder.getInstance().setTemplateManagerService(templateManagerService);
-//        when(ServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
-//        when(ServiceValueHolder.getInstance().getEventStreamService()).thenReturn(eventStreamService);
-//        when(ServiceValueHolder.getInstance().getTemplateManagerService()).thenReturn(templateManagerService);
 
     }
 
@@ -117,7 +113,7 @@ public class CalculateApiServiceImplTest {
         CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
         RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
         Assert.assertEquals((int)scoreDTO.getScore(),1);
-//        Assert.assertNotNull(scoreDTO);
+        Assert.assertNotNull(scoreDTO.toString());
 
     }
 
@@ -166,7 +162,7 @@ public class CalculateApiServiceImplTest {
         CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
         RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
         Assert.assertEquals((int)scoreDTO.getScore(),2);
-//        Assert.assertNotNull(scoreDTO);
+        Assert.assertNotNull(scoreDTO.toString());
 
     }
 

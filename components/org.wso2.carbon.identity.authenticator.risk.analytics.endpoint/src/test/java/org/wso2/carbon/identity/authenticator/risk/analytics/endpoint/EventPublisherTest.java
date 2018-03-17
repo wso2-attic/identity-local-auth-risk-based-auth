@@ -35,10 +35,9 @@ import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 
+import java.util.HashMap;
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -63,8 +62,8 @@ public class EventPublisherTest {
     @BeforeMethod
     void setUp() {
         initMocks(this);
-        serverConfiguration = new ServerConfiguration("localhost", "9612", "9712", "9444", "admin", "admin",
-                "RiskScoreRequest", "RiskScorePerRule");
+        serverConfiguration = new ServerConfiguration("localhost", "9612", "9712",
+                "9444", "admin", "admin", "RiskScoreRequest", "RiskScorePerRule");
     }
 
     @Test
@@ -72,12 +71,25 @@ public class EventPublisherTest {
 
         whenNew(DataPublisher.class).withAnyArguments().thenReturn(dataPublisher);
         EventPublisher eventPublisher = new EventPublisher(serverConfiguration);
-        AuthRequestDTO authRequestDTO = mock(AuthRequestDTO.class);
-        when(authRequestDTO.getTimestamp()).thenReturn(String.valueOf(System.currentTimeMillis()));
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setUsername("admin");
+        authRequestDTO.setUserStoreDomain("PRIMARY");
+        authRequestDTO.setTenantDomain("carbon.super");
+        authRequestDTO.setRemoteIp("123.43.32.5");
+        authRequestDTO.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        authRequestDTO.setInboundAuthType("step");
+        authRequestDTO.setServiceProvider("travelocity");
+        authRequestDTO.setRememberMeEnabled(false);
+        authRequestDTO.setForceAuthEnabled(false);
+        authRequestDTO.setPassiveAuthEnabled(false);
+        authRequestDTO.setIdentityProvider("local");
+        authRequestDTO.setStepAuthenticator("1");
+        authRequestDTO.setPropertyMap(new HashMap<String, String>());
+
         String id = String.valueOf(UUID.randomUUID());
 
         eventPublisher.sendEvent(authRequestDTO, id);
-
+        Assert.assertNotNull(authRequestDTO.toString());
         Mockito.verify(dataPublisher, Mockito.times(1)).publish(Matchers.any(Event.class));
     }
 

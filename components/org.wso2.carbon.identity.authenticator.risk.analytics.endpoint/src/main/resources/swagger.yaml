@@ -24,10 +24,6 @@ paths:
           description: Risk Score
           schema:
             $ref: '#/definitions/riskScore'
-        '500':
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/errorModel'
 
 definitions:
   authRequest:
@@ -85,19 +81,4 @@ definitions:
         type: integer
         format : int32
         default : 2
-  errorModel:
-    type: object
-    required:
-      - status
-      - code
-      - message
-      - additionalDetails
-    properties:
-      status:
-        type: string
-      code:
-        type: string
-      message:
-        type: string
-
 
