@@ -115,9 +115,6 @@ public class ConnectionHandlerTest {
 
         PowerMockito.when(HttpClientBuilder.class, "create").thenReturn(builder);
         PowerMockito.when(CarbonUtils.class, "getServerConfiguration").thenReturn(serverConfiguration);
-//        PowerMockito.when(IdentityUtil.class, "getProperty", "Analytics.ISAnalyticsServerURL").thenReturn
-//                ("https://localhost:9444");
-
         when(builder.build()).thenReturn(mockHttpClient);
         when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
         when(serverConfiguration.getFirstProperty("Security.KeyStore.Location")).thenReturn("path");
@@ -139,7 +136,6 @@ public class ConnectionHandlerTest {
 
         HttpEntity httpEntity = mock(HttpEntity.class);
         RiskScoreDTO riskScore = mock(RiskScoreDTO.class);
-//        connectionHandler = new ConnectionHandler(mockHttpClient,mockHttpPost);
 
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenReturn(mockHttpResponse);
         when(mockStatusLine.getStatusCode()).thenReturn(200);

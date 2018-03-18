@@ -32,7 +32,7 @@ import org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunctionImpl;
  * Register the java function which calculates the risk of auth requests
  */
 @Component(
-        name = "identity.application.authentication.framework.extension.js.riskscore.functions.component",
+        name = "identity.authenticator.risk.authenticator.risk.function.component",
         immediate = true)
 public class JavascriptFunctionsSupplierComponent {
 

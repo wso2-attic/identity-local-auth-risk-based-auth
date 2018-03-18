@@ -19,10 +19,8 @@
 package org.wso2.carbon.identity.authenticator.risk;
 
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
-import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsParameters;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**

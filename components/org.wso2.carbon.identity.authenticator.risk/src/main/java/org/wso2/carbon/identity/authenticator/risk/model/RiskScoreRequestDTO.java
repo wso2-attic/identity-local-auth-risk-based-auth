@@ -44,7 +44,7 @@ public class RiskScoreRequestDTO {
     public RiskScoreRequestDTO() {
     }
 
-    public RiskScoreRequestDTO(AuthenticationContext context , Map<String,String> propertyMap) {
+    public RiskScoreRequestDTO(AuthenticationContext context, Map<String, String> propertyMap) {
         this.username = context.getSubject().getUserName();
         this.userStoreDomain = context.getSubject().getUserStoreDomain();
         this.tenantDomain = context.getSubject().getTenantDomain();

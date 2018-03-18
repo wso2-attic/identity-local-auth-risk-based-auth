@@ -31,8 +31,8 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.ServerConf
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRequestDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtil;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.Map;

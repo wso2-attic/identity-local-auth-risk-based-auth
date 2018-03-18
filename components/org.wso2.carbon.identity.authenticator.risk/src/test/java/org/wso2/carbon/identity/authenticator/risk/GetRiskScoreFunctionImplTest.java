@@ -33,12 +33,10 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.identity.application.authentication.framework.config.model.graph.js.JsAuthenticationContext;
 import org.wso2.carbon.identity.authenticator.risk.exception.RiskScoreCalculationException;
 import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTO;
-import org.wso2.carbon.identity.authenticator.risk.model.RiskScoreRequestDTOTest;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -62,7 +60,7 @@ public class GetRiskScoreFunctionImplTest {
     private JsAuthenticationContext jsAuthenticationContext;
 
     @Mock
-    private Map<String,String> propertyMap;
+    private Map<String, String> propertyMap;
 
     private GetRiskScoreFunctionImpl mockFunctionImpl;
 
@@ -77,13 +75,12 @@ public class GetRiskScoreFunctionImplTest {
         initMocks(this);
         mockFunctionImpl = new GetRiskScoreFunctionImpl();
         mockStatic(IdentityUtil.class);
-        PowerMockito.when(IdentityUtil.class, "getProperty" , "Analytics.Enabled" ).thenReturn("true");
+        PowerMockito.when(IdentityUtil.class, "getProperty", "Analytics.Enabled").thenReturn("true");
 
     }
 
     @Test
     public void testCalculateRiskScoreMethodInvocation() throws Exception {
-//       Map<String, String> propertyMap = mock(Map.class);
         whenNew(RiskScoreRequestDTO.class).withAnyArguments().thenReturn(riskScoreRequestDTO);
         whenNew(ConnectionHandler.class).withNoArguments().thenReturn(handler);
         mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap);
@@ -95,7 +92,6 @@ public class GetRiskScoreFunctionImplTest {
         whenNew(RiskScoreRequestDTO.class).withAnyArguments().thenReturn(riskScoreRequestDTO);
         whenNew(ConnectionHandler.class).withNoArguments().thenReturn(handler);
         when(handler.calculateRiskScore(riskScoreRequestDTO)).thenThrow(new RiskScoreCalculationException());
-//        Map<String, String> propertyMap = mock(Map.class);
         Assert.assertEquals(mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap), 2);
     }
 
@@ -103,9 +99,8 @@ public class GetRiskScoreFunctionImplTest {
     public void testCalculateRiskScoreConstructorException() throws Exception {
         whenNew(RiskScoreRequestDTO.class).withAnyArguments().thenReturn(riskScoreRequestDTO);
         whenNew(ConnectionHandler.class).withNoArguments().thenThrow(new RiskScoreCalculationException());
-//        Map<String, String> propertyMap = mock(Map.class);
         Assert.assertEquals(mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap), 2);
-        verify(handler,Mockito.times(0)).calculateRiskScore(riskScoreRequestDTO);
+        verify(handler, Mockito.times(0)).calculateRiskScore(riskScoreRequestDTO);
     }
 
 }

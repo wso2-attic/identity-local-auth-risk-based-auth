@@ -26,16 +26,16 @@ import org.testng.annotations.Test;
 public class RiskScoreDTOTest {
 
     @Test
-    public void testGetScore(){
+    public void testGetScore() {
         RiskScoreDTO riskScoreDTO = new RiskScoreDTO(4);
         Assert.assertEquals(riskScoreDTO.getScore(), 4);
     }
 
     @Test
-    public void testSetScore(){
+    public void testSetScore() {
         RiskScoreDTO riskScoreDTO = new RiskScoreDTO();
         riskScoreDTO.setScore(4);
-        Assert.assertEquals(riskScoreDTO.getScore(),4);
+        Assert.assertEquals(riskScoreDTO.getScore(), 4);
     }
 
 

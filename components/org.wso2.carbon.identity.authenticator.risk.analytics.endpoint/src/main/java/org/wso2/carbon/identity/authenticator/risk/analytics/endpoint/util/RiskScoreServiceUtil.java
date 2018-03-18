@@ -86,7 +86,7 @@ public class RiskScoreServiceUtil {
         if ((authenticationStreamElement = configElement.getFirstChildWithName(new QName(Constants
                 .AUTHENTICATION_STREAM))) == null) {
             throw new RiskScoreServiceConfigurationException("Invalid config element with no authentication stream in"
-                    + " " +                     Constants.RISK_CALCULATOR_CONFIG_XML);
+                    + " " + Constants.RISK_CALCULATOR_CONFIG_XML);
         }
         if ((riskScoreStreamElement = configElement.getFirstChildWithName(new QName(Constants.RISK_SCORE_STREAM))) ==
                 null) {
@@ -139,7 +139,7 @@ public class RiskScoreServiceUtil {
     /**
      * Get the path of the configuration file
      */
-    public static String getFilePath() {
+    private static String getFilePath() {
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);
         return carbonHome + File.separator + Constants.RISK_CALCULATOR_CONFIG_XML;
     }
