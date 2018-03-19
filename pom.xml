@@ -441,8 +441,5 @@
 
         <commons-logging.version>1.2</commons-logging.version>
         <com.google.gson.version>2.6.2</com.google.gson.version>
-
     </properties>
-
-
 </project>

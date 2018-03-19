@@ -36,6 +36,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+/**
+ * Utility functions for the risk score calculation service
+ */
 public class RiskScoreServiceUtil {
     private static final Log log = LogFactory.getLog(RiskScoreServiceUtil.class);
 
@@ -94,7 +97,6 @@ public class RiskScoreServiceUtil {
                     Constants.RISK_CALCULATOR_CONFIG_XML);
         }
 
-
         return new ServerConfiguration(hostNameElement.getText(), tcpPortElement.getText(), sslPortElement.getText(),
                 httpsPortElement.getText(), usernameElement.getText(), passwordElement.getText(),
                 authenticationStreamElement
@@ -134,7 +136,6 @@ public class RiskScoreServiceUtil {
             }
         }
     }
-
 
     /**
      * Get the path of the configuration file

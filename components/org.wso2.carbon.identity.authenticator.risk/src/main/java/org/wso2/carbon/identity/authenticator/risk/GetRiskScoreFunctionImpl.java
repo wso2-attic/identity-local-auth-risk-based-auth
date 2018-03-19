@@ -49,7 +49,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
         int riskScore = RiskScoreConstants.DEFAULT_RISK_SCORE;
 
         // Check whether Analytics is enabled in the identity.xml
-        Boolean isEnabled = Boolean.parseBoolean(IdentityUtil.getProperty("Analytics.Enabled"));
+        Boolean isEnabled = Boolean.parseBoolean(IdentityUtil.getProperty(RiskScoreConstants.ANALYTICS_ENABLED));
 
         try {
             if (isEnabled) {
@@ -62,10 +62,7 @@ public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
             }
         } catch (RiskScoreCalculationException e) {
             log.warn("Could not calculate risk score. " + e.getMessage(), e);
-
         }
         return riskScore;
     }
-
-
 }

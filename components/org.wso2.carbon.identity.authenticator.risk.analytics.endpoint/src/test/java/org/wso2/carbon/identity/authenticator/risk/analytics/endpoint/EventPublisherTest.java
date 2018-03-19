@@ -68,7 +68,6 @@ public class EventPublisherTest {
 
     @Test
     public void testEventPubliser() throws Exception {
-
         whenNew(DataPublisher.class).withAnyArguments().thenReturn(dataPublisher);
         EventPublisher eventPublisher = new EventPublisher(serverConfiguration);
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
@@ -103,7 +102,5 @@ public class EventPublisherTest {
             Assert.assertNotNull(e);
         }
         Mockito.verify(dataPublisher, Mockito.times(0)).publish(Matchers.any(Event.class));
-
     }
-
 }

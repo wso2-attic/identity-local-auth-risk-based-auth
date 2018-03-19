@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
-import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -38,9 +37,9 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRe
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.RiskScoreDTO;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception.RiskScoreServiceConfigurationException;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.impl.CalculateApiServiceImpl;
-import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.Constants;
 import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.RiskScoreServiceUtil;
+import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.ServiceValueHolder;
 
 import java.util.Collection;
 
@@ -60,8 +59,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PowerMockIgnore({"javax.ws.*"})
 
 public class CalculateApiServiceImplTest {
-    private static final Logger log = Logger.getLogger(CalculateApiServiceImplTest.class);
-
 
     @Mock
     private EventStreamService eventStreamService;
@@ -78,7 +75,6 @@ public class CalculateApiServiceImplTest {
     @Mock
     private AuthRequestDTO authRequestDTO;
 
-
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
@@ -91,7 +87,6 @@ public class CalculateApiServiceImplTest {
 
         ServiceValueHolder.getInstance().setEventStreamService(eventStreamService);
         ServiceValueHolder.getInstance().setTemplateManagerService(templateManagerService);
-
     }
 
     @Test
@@ -112,9 +107,8 @@ public class CalculateApiServiceImplTest {
 
         CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
         RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
-        Assert.assertEquals((int)scoreDTO.getScore(),1);
+        Assert.assertEquals((int) scoreDTO.getScore(), 1);
         Assert.assertNotNull(scoreDTO.toString());
-
     }
 
     @Test
@@ -146,10 +140,10 @@ public class CalculateApiServiceImplTest {
         }
     }
 
-
     @Test
     public void testCountRulesException() throws Exception {
-        when(templateManagerService.getConfigurations(Constants.TEMPLATE_MANAGER_DOMAIN_NAME)).thenThrow(new TemplateManagerException());
+        when(templateManagerService.getConfigurations(Constants.TEMPLATE_MANAGER_DOMAIN_NAME)).thenThrow(new
+                TemplateManagerException());
 
         ResultContainer container = new ResultContainer();
         whenNew(ResultContainer.class).withNoArguments().thenReturn(container);
@@ -161,25 +155,7 @@ public class CalculateApiServiceImplTest {
 
         CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
         RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
-        Assert.assertEquals((int)scoreDTO.getScore(),2);
+        Assert.assertEquals((int) scoreDTO.getScore(), 2);
         Assert.assertNotNull(scoreDTO.toString());
-
     }
-
-//    @Test
-//    public void testInterruptedException() throws Exception {
-//        ResultContainer mock = mock(ResultContainer.class);
-//
-//        whenNew(ResultContainer.class).withNoArguments().thenReturn(mock);
-//        whenNew(EventPublisher.class).withArguments(serverConfiguration).thenReturn(eventPublisher);
-//        when(RiskScoreServiceUtil.loadServerConfig()).thenReturn(serverConfiguration);
-//        when(serverConfiguration.getRiskScoreStream()).thenReturn("RiskScore");
-//        when(mock.getRiskScoreDTO()).thenThrow(new InterruptedException());
-//
-//        CalculateApiServiceImpl calculateApiService = new CalculateApiServiceImpl();
-//        calculateApiService.calculateRiskScore(authRequestDTO);
-//        RiskScoreDTO scoreDTO = (RiskScoreDTO) calculateApiService.calculateRiskScore(authRequestDTO).getEntity();
-//        Assert.assertEquals((int)scoreDTO.getScore(),2);
-//    }
-
 }

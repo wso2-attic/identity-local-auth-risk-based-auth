@@ -25,7 +25,6 @@
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.EventPublisherTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.CalculateApiServiceImplTest"/>
             <class name="org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.RiskScoreStreamConsumerTest"/>
-
         </classes>
     </test>
 </suite>

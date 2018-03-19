@@ -70,7 +70,7 @@ public class CalculateApiServiceImpl extends CalculateApiService {
     }
 
     /**
-     * auth request is forwarded to publisher to publish to is-analytics. Then upon calling getResults() request
+     * Auth request is forwarded to publisher to publish to is-analytics. Then upon calling getResults() request
      * thread will block on a Count Down latch until results arrive.
      *
      * @param authRequest authentication request of risk score calculation
@@ -99,7 +99,7 @@ public class CalculateApiServiceImpl extends CalculateApiService {
 
 
     public class StreamSubscriber implements Runnable {
-        //Periodically poll and subscribe to service. This is needed because at the time of web app initialization
+        // Periodically poll and subscribe to service. This is needed because at the time of web app initialization
         // relevant resources needed for the web app are not loaded in WSO2 server. Hence we keep polling for the
         // resources.
         @Override

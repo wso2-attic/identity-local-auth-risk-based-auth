@@ -26,7 +26,7 @@ public class ServerConfiguration {
     private String hostname;
     private String binaryTCPPort;
     private String binarySSLPort;
-    private String HTTPSPort;
+    private String httpsPort;
     private String username;
     private String password;
     private String authenticationStream;
@@ -49,13 +49,12 @@ public class ServerConfiguration {
         this.hostname = hostname;
         this.binaryTCPPort = binaryTCPPort;
         this.binarySSLPort = binarySSLPort;
-        this.HTTPSPort = HTTPSPort;
+        this.httpsPort = HTTPSPort;
         this.username = username;
         this.password = password;
         this.authenticationStream = authenticationStream;
         this.riskScoreStream = riskScoreStream;
     }
-
 
     public String getHostname() {
         return hostname;
@@ -77,8 +76,8 @@ public class ServerConfiguration {
         return password;
     }
 
-    public String getHTTPSPort() {
-        return HTTPSPort;
+    public String getHttpsPort() {
+        return httpsPort;
     }
 
     public String getAuthenticationStream() {

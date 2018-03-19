@@ -22,15 +22,11 @@
     <artifact name="org.wso2.analytics.risk.calculator" version="1.0.0" type="carbon/application">
         <dependency artifact="RiskScoreRequestEventReceiver" version="1.0.0" include="true"
                     serverRole="DataAnalyticsServer"/>
-        <!--<dependency artifact="ProcessedAuthenticationForRiskScoreEventStream" version="1.0.0" include="true"-->
-                    <!--serverRole="DataAnalyticsServer"/>-->
         <dependency artifact="RiskScorePerRuleEventStream" version="1.0.0" include="true"
                     serverRole="DataAnalyticsServer"/>
         <dependency artifact="RiskScoreRequestEventStream" version="1.0.0" include="true"
                     serverRole="DataAnalyticsServer"/>
         <dependency artifact="RiskScoreCalculator-PersistDataForRiskScore" version="1.0.0" include="true"
                     serverRole="ComplexEventProcessor"/>
-        <!--<dependency artifact="ProcessedAuthenticationForRiskScoreEventSink" version="1.0.0" include="true"-->
-                    <!--serverRole="DataAnalyticsServer"/>-->
     </artifact>
 </artifacts>

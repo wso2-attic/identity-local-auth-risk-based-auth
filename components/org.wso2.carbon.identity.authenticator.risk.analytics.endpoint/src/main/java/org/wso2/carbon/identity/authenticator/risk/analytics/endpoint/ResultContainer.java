@@ -41,13 +41,12 @@ public class ResultContainer {
     public ResultContainer() {
         this.latch = new CountDownLatch(1);
         try {
-            this.numberOfRules = ServiceValueHolder.getInstance().getTemplateManagerService().getConfigurations
-                    (Constants.TEMPLATE_MANAGER_DOMAIN_NAME).size();
+            this.numberOfRules = ServiceValueHolder.getInstance().getTemplateManagerService()
+                    .getConfigurations(Constants.TEMPLATE_MANAGER_DOMAIN_NAME).size();
         } catch (TemplateManagerException e) {
             latch.countDown();
             log.error("Failed to get number of rules deployed. " + e.getMessage(), e);
         }
-
     }
 
     /**
@@ -79,5 +78,4 @@ public class ResultContainer {
         }
         return riskScore;
     }
-
 }

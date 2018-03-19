@@ -59,9 +59,7 @@ public class RiskScoreServiceUtilTest {
         String path = classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML).getPath();
         int index = path.lastIndexOf(File.separator);
         pathToConfigFileLocation = path.substring(0, index);
-
     }
-
 
     @Test
     public void testFileLoad() throws Exception {
@@ -194,15 +192,6 @@ public class RiskScoreServiceUtilTest {
         }
     }
 
-//    @Test
-//    public void testXMLException() throws Exception {
-//        System.setProperty(ServerConstants.CARBON_CONFIG_DIR_PATH, pathToConfigFileLocation);
-//
-//        appendNode("error", "</error>");
-//        RiskScoreServiceUtil.loadServerConfig();
-//
-//    }
-
     private void deleteNode(String nodeName) throws Exception {
         String path = pathToConfigFileLocation + File.separator + Constants.RISK_CALCULATOR_CONFIG_XML;
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -221,8 +210,6 @@ public class RiskScoreServiceUtilTest {
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(new File(path).getPath());
         transformer.transform(domSource, streamResult);
-
-
     }
 
     private void appendNode(String nodeName, String value) throws Exception {
@@ -240,6 +227,4 @@ public class RiskScoreServiceUtilTest {
         StreamResult streamResult = new StreamResult(new File(path).getPath());
         transformer.transform(domSource, streamResult);
     }
-
-
 }
