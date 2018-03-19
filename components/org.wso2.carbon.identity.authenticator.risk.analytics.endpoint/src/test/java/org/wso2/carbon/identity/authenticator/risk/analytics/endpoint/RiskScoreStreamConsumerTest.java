@@ -33,13 +33,10 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util.Servi
 
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * Tests RiskScoreConsumer class
@@ -60,6 +57,7 @@ public class RiskScoreStreamConsumerTest {
 
     @Mock
     private TemplateManagerService templateManagerService;
+
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
@@ -68,11 +66,6 @@ public class RiskScoreStreamConsumerTest {
     @BeforeMethod
     void setUp() {
         initMocks(this);
-//        mockStatic(ServiceValueHolder.class);
-//        ServiceValueHolder carbonServiceValueHolder = mock(ServiceValueHolder.class);
-//        when(ServiceValueHolder.getInstance()).thenReturn(carbonServiceValueHolder);
-//        when(ServiceValueHolder.getInstance().getResultContainerMap()).thenReturn(resultContainerMap);
-//        when(ServiceValueHolder.getInstance().getTemplateManagerService()).thenReturn(templateManagerService);
         ServiceValueHolder.getInstance().setTemplateManagerService(templateManagerService);
         ServiceValueHolder.getInstance().setResultContainerMap(resultContainerMap);
     }
@@ -93,6 +86,6 @@ public class RiskScoreStreamConsumerTest {
     @Test
     public void testGetStreamId() {
         RiskScoreStreamConsumer consumer = new RiskScoreStreamConsumer("RiskScoreStream");
-        Assert.assertEquals(consumer.getStreamId(),"RiskScoreStream");
+        Assert.assertEquals(consumer.getStreamId(), "RiskScoreStream");
     }
 }

@@ -72,7 +72,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class ConnectionHandlerTest {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
-
     private ConnectionHandler connectionHandler;
 
     @Mock
@@ -118,7 +117,8 @@ public class ConnectionHandlerTest {
         when(builder.build()).thenReturn(mockHttpClient);
         when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
         when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_LOCATION)).thenReturn("path");
-        when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_PASSWORD)).thenReturn("password");
+        when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_PASSWORD)).thenReturn
+                ("password");
         when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_TYPE)).thenReturn("JKS");
 
         whenNew(ObjectMapper.class).withNoArguments().thenReturn(mapper);
@@ -126,7 +126,6 @@ public class ConnectionHandlerTest {
         whenNew(HttpPost.class).withAnyArguments().thenReturn(mockHttpPost);
         whenNew(FileInputStream.class).withAnyArguments().thenReturn(inputStream);
         connectionHandler = new ConnectionHandler();
-
     }
 
 
@@ -208,5 +207,4 @@ public class ConnectionHandlerTest {
             Assert.assertEquals(e.getMessage(), "Failed to connect with the server");
         }
     }
-
 }

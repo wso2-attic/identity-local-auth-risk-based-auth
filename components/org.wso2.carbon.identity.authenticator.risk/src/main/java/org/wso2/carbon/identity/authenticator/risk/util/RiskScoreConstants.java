@@ -27,5 +27,6 @@ public class RiskScoreConstants {
     public static final String SECURITY_KEYSTORE_PASSWORD = "Security.KeyStore.Password";
     public static final String SECURITY_KEYSTORE_TYPE = "Security.KeyStore.Type";
     public static final String ANALYTICS_DAS_SERVER_URL = "Analytics.DASServerURL";
+    public static final String ANALYTICS_ENABLED = "Analytics.Enabled";
 
 }
