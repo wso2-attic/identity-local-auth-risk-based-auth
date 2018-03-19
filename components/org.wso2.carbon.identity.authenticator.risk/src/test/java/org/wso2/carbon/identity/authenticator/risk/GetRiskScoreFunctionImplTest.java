@@ -51,19 +51,16 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({GetRiskScoreFunctionImpl.class, IdentityUtil.class})
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
 public class GetRiskScoreFunctionImplTest {
-
     @Mock
     private RiskScoreRequestDTO riskScoreRequestDTO;
     @Mock
     private ConnectionHandler handler;
     @Mock
     private JsAuthenticationContext jsAuthenticationContext;
-
     @Mock
     private Map<String, String> propertyMap;
 
     private GetRiskScoreFunctionImpl mockFunctionImpl;
-
 
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
@@ -76,7 +73,6 @@ public class GetRiskScoreFunctionImplTest {
         mockFunctionImpl = new GetRiskScoreFunctionImpl();
         mockStatic(IdentityUtil.class);
         PowerMockito.when(IdentityUtil.class, "getProperty", "Analytics.Enabled").thenReturn("true");
-
     }
 
     @Test

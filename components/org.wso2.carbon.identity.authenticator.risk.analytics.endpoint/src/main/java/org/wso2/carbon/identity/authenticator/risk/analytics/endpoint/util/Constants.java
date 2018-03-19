@@ -20,10 +20,6 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
 public class Constants {
 
-    private Constants() {
-        //avoids initialization
-    }
-
     public static final String RISK_CALCULATOR_CONFIG_XML = "risk-calculator-config.xml";
     public static final String HOST_NAME = "hostName";
     public static final String TCP_PORT = "binaryTCPPort";
@@ -33,8 +29,10 @@ public class Constants {
     public static final String AUTHENTICATION_STREAM = "authenticationStream";
     public static final String RISK_SCORE_STREAM = "riskScoreStream";
     public static final String HTTPS_PORT = "HTTPSPort";
-
     public static final int DEFAULT_RISK_SCORE = 2;
     public static final String TEMPLATE_MANAGER_DOMAIN_NAME = "RiskScoreCalculator";
+    private Constants() {
+        //avoids initialization
+    }
 
 }

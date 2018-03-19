@@ -117,9 +117,9 @@ public class ConnectionHandlerTest {
         PowerMockito.when(CarbonUtils.class, "getServerConfiguration").thenReturn(serverConfiguration);
         when(builder.build()).thenReturn(mockHttpClient);
         when(mapper.writeValueAsString(riskScoreRequestDTO)).thenReturn("request");
-        when(serverConfiguration.getFirstProperty("Security.KeyStore.Location")).thenReturn("path");
-        when(serverConfiguration.getFirstProperty("Security.KeyStore.Password")).thenReturn("password");
-        when(serverConfiguration.getFirstProperty("Security.KeyStore.Type")).thenReturn("JKS");
+        when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_LOCATION)).thenReturn("path");
+        when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_PASSWORD)).thenReturn("password");
+        when(serverConfiguration.getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_TYPE)).thenReturn("JKS");
 
         whenNew(ObjectMapper.class).withNoArguments().thenReturn(mapper);
         whenNew(StringEntity.class).withAnyArguments().thenReturn(requestBody);

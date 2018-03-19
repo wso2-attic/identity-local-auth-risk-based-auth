@@ -54,14 +54,14 @@ public class ConnectionHandler {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
 
     /**
-     * send the authentication request data to the IS analytics and obtain the risk score
+     * Send the authentication request data to the IS analytics and obtain the risk score
      *
      * @param requestDTO Authentication context
      * @return riskScore riskScore value for the authentication request
      */
     public int calculateRiskScore(RiskScoreRequestDTO requestDTO) throws RiskScoreCalculationException {
         // Building the http request
-        String baseURL = IdentityUtil.getProperty("Analytics.DASServerURL");
+        String baseURL = IdentityUtil.getProperty(RiskScoreConstants.ANALYTICS_DAS_SERVER_URL);
         HttpPost httpPost = new HttpPost(baseURL + RiskScoreConstants.RISK_SCORE_SERVICE_PATH);
         httpPost.setEntity(createRequestBody(requestDTO));
         RequestConfig requestConfig = RequestConfig.custom()
@@ -77,9 +77,9 @@ public class ConnectionHandler {
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-            String pathToKeyStore = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Location");
-            String password = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Password");
-            String type = CarbonUtils.getServerConfiguration().getFirstProperty("Security.KeyStore.Type");
+            String pathToKeyStore = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_LOCATION);
+            String password = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_PASSWORD);
+            String type = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_TYPE);
             KeyStore keyStore = KeyStore.getInstance(type);
             InputStream inputStream = new FileInputStream(pathToKeyStore);
             keyStore.load(inputStream, password.toCharArray());
@@ -117,6 +117,12 @@ public class ConnectionHandler {
         return riskScore;
     }
 
+    /**
+     * Create a entity from a java object
+     * @param riskScoreRequestDTO java object for the risk score request
+     * @return risk score request converted into a string entity
+     * @throws RiskScoreCalculationException exception when the converting fails
+     */
     private StringEntity createRequestBody(RiskScoreRequestDTO riskScoreRequestDTO) throws
             RiskScoreCalculationException {
         ObjectMapper mapper = new ObjectMapper();
@@ -131,6 +137,12 @@ public class ConnectionHandler {
         return requestBody;
     }
 
+    /**
+     * Extract the risk score object from the Http Response
+     * @param response Http Response containing the risk score
+     * @return risk score
+     * @throws RiskScoreCalculationException exception when the extraction fails
+     */
     private int getScoreFromResponse(CloseableHttpResponse response) throws RiskScoreCalculationException {
         ObjectMapper mapper = new ObjectMapper();
         int riskScore;

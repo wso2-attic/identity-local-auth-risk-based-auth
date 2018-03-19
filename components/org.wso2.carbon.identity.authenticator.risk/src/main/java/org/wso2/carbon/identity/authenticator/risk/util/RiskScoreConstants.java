@@ -23,5 +23,9 @@ package org.wso2.carbon.identity.authenticator.risk.util;
 public class RiskScoreConstants {
     public static final String RISK_SCORE_SERVICE_PATH = "/api/authentication/adaptive/risk/calculate";
     public static final int DEFAULT_RISK_SCORE = 2;
+    public static final String SECURITY_KEYSTORE_LOCATION = "Security.KeyStore.Location";
+    public static final String SECURITY_KEYSTORE_PASSWORD = "Security.KeyStore.Password";
+    public static final String SECURITY_KEYSTORE_TYPE = "Security.KeyStore.Type";
+    public static final String ANALYTICS_DAS_SERVER_URL = "Analytics.DASServerURL";
 
 }

@@ -45,9 +45,7 @@ import javax.ws.rs.core.Response;
  * Contains the risk score service implementation logic
  */
 public class CalculateApiServiceImpl extends CalculateApiService {
-
     private static final Log log = LogFactory.getLog(CalculateApiServiceImpl.class);
-
     private EventStreamService eventStreamService;
     private RiskScoreStreamConsumer riskScoreStreamConsumer;
     private Map<String, ResultContainer> resultContainerMap;
@@ -59,7 +57,7 @@ public class CalculateApiServiceImpl extends CalculateApiService {
         this.resultContainerMap = ServiceValueHolder.getInstance().getResultContainerMap();
 
         try {
-            //Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml
+            // Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml
             ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
             this.riskScoreStreamConsumer = new RiskScoreStreamConsumer(serverConfiguration.getRiskScoreStream());
             this.publisher = new EventPublisher(serverConfiguration);
@@ -106,13 +104,13 @@ public class CalculateApiServiceImpl extends CalculateApiService {
         // resources.
         @Override
         public void run() {
-            //setup thread local information that will be used by carbon service for verification purposes.
+            // Setup thread local information that will be used by carbon service for verification purposes.
             int tenantId = MultitenantConstants.SUPER_TENANT_ID;
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
             while (true) {
                 try {
-                    //subscribe to Event Stream Service as consumers to receive events from IS-Analytics
+                    // Subscribe to Event Stream Service as consumers to receive events from IS-Analytics
                     eventStreamService.subscribe(riskScoreStreamConsumer);
                 } catch (EventStreamConfigurationException e) {
                     log.error("Risk score calculate service API deployment held back due to unavailability of event " +
