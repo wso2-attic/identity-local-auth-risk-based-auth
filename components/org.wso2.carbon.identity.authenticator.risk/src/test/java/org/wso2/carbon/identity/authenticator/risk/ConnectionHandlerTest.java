@@ -124,7 +124,7 @@ public class ConnectionHandlerTest {
         whenNew(ObjectMapper.class).withNoArguments().thenReturn(mapper);
         whenNew(StringEntity.class).withAnyArguments().thenReturn(requestBody);
         whenNew(HttpPost.class).withAnyArguments().thenReturn(mockHttpPost);
-        whenNew(FileInputStream.class).withAnyArguments().thenReturn((FileInputStream) inputStream);
+        whenNew(FileInputStream.class).withAnyArguments().thenReturn(inputStream);
         connectionHandler = new ConnectionHandler();
 
     }

@@ -54,10 +54,10 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 public class RiskScoreRequestDTOTest {
 
     @Mock
-    AuthenticationContext authenticationContext;
+    private AuthenticationContext authenticationContext;
+
     @Mock
-    Map<String, String> propertyMap;
-    private RiskScoreRequestDTO riskScoreRequestDTO;
+    private Map<String, String> propertyMap;
 
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
@@ -68,11 +68,11 @@ public class RiskScoreRequestDTOTest {
     @BeforeMethod
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(IdentityUtil.class);
 
         AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
         ExternalIdPConfig externalIdPConfig = mock(ExternalIdPConfig.class);
         HttpServletRequest httpRequest = mock(HttpServletRequest.class);
-        mockStatic(IdentityUtil.class);
 
         when(authenticationContext.getSubject()).thenReturn(authenticatedUser);
         when(authenticatedUser.getUserName()).thenReturn("user");
@@ -94,7 +94,7 @@ public class RiskScoreRequestDTOTest {
     @Test
     public void testGettersAndSetters() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        riskScoreRequestDTO = new RiskScoreRequestDTO(authenticationContext, propertyMap);
+        RiskScoreRequestDTO riskScoreRequestDTO = new RiskScoreRequestDTO(authenticationContext, propertyMap);
 
         StringEntity requestBody = null;
         RiskScoreRequestDTO newRequest = null;
@@ -110,6 +110,4 @@ public class RiskScoreRequestDTOTest {
         Assert.assertNotNull(requestBody);
         Assert.assertNotNull(newRequest);
     }
-
-
 }
