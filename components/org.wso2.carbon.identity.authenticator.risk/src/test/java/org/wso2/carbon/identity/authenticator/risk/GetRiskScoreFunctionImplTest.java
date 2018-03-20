@@ -44,7 +44,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
- * Tests the Function Implementation class
+ * Tests the Function Implementation class.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GetRiskScoreFunctionImpl.class, IdentityUtil.class})
@@ -97,5 +97,4 @@ public class GetRiskScoreFunctionImplTest {
         Assert.assertEquals(mockFunctionImpl.getRiskScore(jsAuthenticationContext, propertyMap), 2);
         verify(handler, Mockito.times(0)).calculateRiskScore(riskScoreRequestDTO);
     }
-
 }

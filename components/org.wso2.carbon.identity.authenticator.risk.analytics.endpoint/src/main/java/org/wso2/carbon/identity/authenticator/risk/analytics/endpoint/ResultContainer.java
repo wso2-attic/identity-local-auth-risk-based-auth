@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Container object blocks the request thread, collects result from IS-Analytics and return the request thread
+ * Container object blocks the request thread, collects result from IS-Analytics and return the request thread.
  */
 public class ResultContainer {
     private static final Logger log = Logger.getLogger(ResultContainer.class);
@@ -60,13 +60,13 @@ public class ResultContainer {
         if (riskScoreList.size() == numberOfRules) {
             latch.countDown();
             if (log.isDebugEnabled()) {
-                log.debug("Result is added to the container. Releasing the thread");
+                log.debug("Result is added to the container. Releasing the thread.");
             }
         }
     }
 
     /**
-     * Wait for other threads to post results
+     * Wait for other threads to post results.
      *
      * @return risk score
      */

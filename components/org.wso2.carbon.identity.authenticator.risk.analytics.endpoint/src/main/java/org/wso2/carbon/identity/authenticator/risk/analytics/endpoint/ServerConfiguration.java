@@ -20,7 +20,7 @@ package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint;
 
 /**
  * Container class to store configuration information of the IS-Analytics stored in file
- * <PRODUCT_HOME>/repository/conf/risk-calculator-config.xml
+ * <PRODUCT_HOME>/repository/conf/risk-calculator-config.xml.
  */
 public class ServerConfiguration {
     private String hostname;

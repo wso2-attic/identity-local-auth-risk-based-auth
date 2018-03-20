@@ -22,7 +22,9 @@ import org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto.AuthRe
 
 import javax.ws.rs.core.Response;
 
+/**
+ * Abstract class for the risk score calculation API service.
+ */
 public abstract class CalculateApiService {
     public abstract Response calculateRiskScore(AuthRequestDTO authRequest);
 }
-

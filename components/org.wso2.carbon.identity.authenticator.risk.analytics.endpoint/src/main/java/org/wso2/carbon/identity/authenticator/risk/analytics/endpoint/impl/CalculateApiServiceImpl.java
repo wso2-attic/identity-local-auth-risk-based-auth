@@ -42,7 +42,7 @@ import java.util.concurrent.Executors;
 import javax.ws.rs.core.Response;
 
 /**
- * Contains the risk score service implementation logic
+ * Contains the risk score service implementation logic.
  */
 public class CalculateApiServiceImpl extends CalculateApiService {
     private static final Log log = LogFactory.getLog(CalculateApiServiceImpl.class);
@@ -57,7 +57,7 @@ public class CalculateApiServiceImpl extends CalculateApiService {
         this.resultContainerMap = ServiceValueHolder.getInstance().getResultContainerMap();
 
         try {
-            // Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml
+            // Reads the configuration file located at <PRODUCT_HOME>/repository/conf/is-analytics-config.xml.
             ServerConfiguration serverConfiguration = RiskScoreServiceUtil.loadServerConfig();
             this.riskScoreStreamConsumer = new RiskScoreStreamConsumer(serverConfiguration.getRiskScoreStream());
             this.publisher = new EventPublisher(serverConfiguration);
@@ -99,9 +99,11 @@ public class CalculateApiServiceImpl extends CalculateApiService {
 
 
     public class StreamSubscriber implements Runnable {
-        // Periodically poll and subscribe to service. This is needed because at the time of web app initialization
-        // relevant resources needed for the web app are not loaded in WSO2 server. Hence we keep polling for the
-        // resources.
+        /*
+        Periodically poll and subscribe to service. This is needed because at the time of web app initialization
+        relevant resources needed for the web app are not loaded in WSO2 server. Hence we keep polling for the
+        resources.
+         */
         @Override
         public void run() {
             // Setup thread local information that will be used by carbon service for verification purposes.
@@ -110,7 +112,7 @@ public class CalculateApiServiceImpl extends CalculateApiService {
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
             while (true) {
                 try {
-                    // Subscribe to Event Stream Service as consumers to receive events from IS-Analytics
+                    // Subscribe to Event Stream Service as consumers to receive events from IS-Analytics.
                     eventStreamService.subscribe(riskScoreStreamConsumer);
                 } catch (EventStreamConfigurationException e) {
                     log.error("Risk score calculate service API deployment held back due to unavailability of event " +
@@ -129,4 +131,3 @@ public class CalculateApiServiceImpl extends CalculateApiService {
         }
     }
 }
-

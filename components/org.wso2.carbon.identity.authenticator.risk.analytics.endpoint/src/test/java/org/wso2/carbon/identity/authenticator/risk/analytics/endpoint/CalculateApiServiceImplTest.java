@@ -50,9 +50,8 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-
 /**
- * Tests the calculate risk score API implementation
+ * Tests the calculate risk score API implementation.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CalculateApiServiceImpl.class, ServiceValueHolder.class, RiskScoreServiceUtil.class})

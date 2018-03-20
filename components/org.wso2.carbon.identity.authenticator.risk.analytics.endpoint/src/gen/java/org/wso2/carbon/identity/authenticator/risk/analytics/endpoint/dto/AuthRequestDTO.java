@@ -26,10 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-
 @ApiModel(description = "")
 public class AuthRequestDTO {
-
 
     @NotNull
     private String username = null;
@@ -67,9 +65,7 @@ public class AuthRequestDTO {
     @NotNull
     private String stepAuthenticator = null;
 
-
     private Map<String, String> propertyMap = new HashMap<String, String>();
-
 
     /**
      **/
@@ -83,7 +79,6 @@ public class AuthRequestDTO {
         this.username = username;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -95,7 +90,6 @@ public class AuthRequestDTO {
     public void setUserStoreDomain(String userStoreDomain) {
         this.userStoreDomain = userStoreDomain;
     }
-
 
     /**
      **/
@@ -109,7 +103,6 @@ public class AuthRequestDTO {
         this.tenantDomain = tenantDomain;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -121,7 +114,6 @@ public class AuthRequestDTO {
     public void setRemoteIp(String remoteIp) {
         this.remoteIp = remoteIp;
     }
-
 
     /**
      **/
@@ -135,7 +127,6 @@ public class AuthRequestDTO {
         this.timestamp = timestamp;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -147,7 +138,6 @@ public class AuthRequestDTO {
     public void setInboundAuthType(String inboundAuthType) {
         this.inboundAuthType = inboundAuthType;
     }
-
 
     /**
      **/
@@ -161,7 +151,6 @@ public class AuthRequestDTO {
         this.serviceProvider = serviceProvider;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -173,7 +162,6 @@ public class AuthRequestDTO {
     public void setRememberMeEnabled(Boolean rememberMeEnabled) {
         this.rememberMeEnabled = rememberMeEnabled;
     }
-
 
     /**
      **/
@@ -187,7 +175,6 @@ public class AuthRequestDTO {
         this.forceAuthEnabled = forceAuthEnabled;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -199,7 +186,6 @@ public class AuthRequestDTO {
     public void setPassiveAuthEnabled(Boolean passiveAuthEnabled) {
         this.passiveAuthEnabled = passiveAuthEnabled;
     }
-
 
     /**
      **/
@@ -213,7 +199,6 @@ public class AuthRequestDTO {
         this.identityProvider = identityProvider;
     }
 
-
     /**
      **/
     @ApiModelProperty(required = true, value = "")
@@ -226,7 +211,6 @@ public class AuthRequestDTO {
         this.stepAuthenticator = stepAuthenticator;
     }
 
-
     /**
      **/
     @ApiModelProperty(value = "")
@@ -238,7 +222,6 @@ public class AuthRequestDTO {
     public void setPropertyMap(Map<String, String> propertyMap) {
         this.propertyMap = propertyMap;
     }
-
 
     @Override
     public String toString() {

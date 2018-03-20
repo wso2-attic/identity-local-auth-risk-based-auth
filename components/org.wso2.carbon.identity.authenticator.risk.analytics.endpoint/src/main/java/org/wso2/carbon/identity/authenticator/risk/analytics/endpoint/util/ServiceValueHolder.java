@@ -36,7 +36,7 @@ public class ServiceValueHolder {
     private static Map<String, ResultContainer> resultContainerMap = new ConcurrentHashMap<>();
 
     private ServiceValueHolder() {
-        //DO nothing
+        // Do nothing.
     }
 
     public static ServiceValueHolder getInstance() {

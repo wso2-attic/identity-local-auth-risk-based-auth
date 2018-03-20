@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
 /**
- * Contains the constants required for the risk score calculation implementation
+ * Contains the constants required for the risk score calculation implementation.
  */
 public class Constants {
 
@@ -36,7 +36,6 @@ public class Constants {
     public static final String TEMPLATE_MANAGER_DOMAIN_NAME = "RiskScoreCalculator";
 
     private Constants() {
-        // Avoids initialization
+        // Avoids initialization.
     }
-
 }

@@ -29,13 +29,13 @@ import org.wso2.carbon.identity.core.util.IdentityUtil;
 import java.util.Map;
 
 /**
- * Implementation of the javascript function to obtain risk score of the authentication requests
+ * Implementation of the javascript function to obtain risk score of the authentication requests.
  */
 public class GetRiskScoreFunctionImpl implements GetRiskScoreFunction {
     private static final Log log = LogFactory.getLog(GetRiskScoreFunctionImpl.class);
 
     /**
-     * Get the risk score from the IS analytics
+     * Get the risk score from the IS analytics.
      *
      * @param context     JsAuthentication Context
      * @param propertyMap additional properties

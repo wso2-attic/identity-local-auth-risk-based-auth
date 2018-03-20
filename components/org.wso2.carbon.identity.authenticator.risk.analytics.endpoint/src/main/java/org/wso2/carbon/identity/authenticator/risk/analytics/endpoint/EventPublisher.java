@@ -47,7 +47,7 @@ public class EventPublisher {
                     ":" + serverConfiguration.getBinarySSLPort(), serverConfiguration.getUsername(),
                     serverConfiguration.getPassword());
             if (log.isDebugEnabled()) {
-                log.debug("Initiated binary data publisher");
+                log.debug("Initiated binary data publisher.");
             }
 
         } catch (DataEndpointAgentConfigurationException | DataEndpointException |
@@ -58,7 +58,7 @@ public class EventPublisher {
     }
 
     /**
-     * create and send an event matching with the stream definition in IS analytics
+     * Create and send an event matching with the stream definition in IS analytics.
      *
      * @param authRequest authentication request object from the API service
      * @param streamID    risk score request streamID
@@ -86,7 +86,7 @@ public class EventPublisher {
         Event event = new Event(serverConfiguration.getAuthenticationStream(), System.currentTimeMillis(), null,
                 null, payloadData);
         if (log.isDebugEnabled()) {
-            log.debug("Sending events to IS-Analytics");
+            log.debug("Sending events to IS-Analytics.");
         }
         dataPublisher.publish(event);
     }

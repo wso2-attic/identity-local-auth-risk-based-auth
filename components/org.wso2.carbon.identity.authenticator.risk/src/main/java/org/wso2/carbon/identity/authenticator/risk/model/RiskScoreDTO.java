@@ -18,7 +18,7 @@
 package org.wso2.carbon.identity.authenticator.risk.model;
 
 /**
- * Contains the Risk score object returned from the IS Analytics
+ * Contains the Risk score object returned from the IS Analytics.
  */
 public class RiskScoreDTO {
     private int score;

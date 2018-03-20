@@ -61,9 +61,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-
 /**
- * Tests the connection with the IS Analytics
+ * Tests the connection with the IS Analytics.
  */
 
 @RunWith(PowerMockRunner.class)
@@ -92,12 +91,10 @@ public class ConnectionHandlerTest {
     @Mock
     private ObjectMapper mapper;
 
-
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
     }
-
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -127,7 +124,6 @@ public class ConnectionHandlerTest {
         whenNew(FileInputStream.class).withAnyArguments().thenReturn(inputStream);
         connectionHandler = new ConnectionHandler();
     }
-
 
     @Test
     public void testResponseCode() throws Exception {
@@ -177,8 +173,8 @@ public class ConnectionHandlerTest {
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
         } catch (RiskScoreCalculationException e) {
-            Assert.assertEquals(e.getMessage(), "HTTP error code : " + mockHttpResponse.getStatusLine().getStatusCode
-                    ());
+            Assert.assertEquals(e.getMessage(), "HTTP error code : " + mockHttpResponse.getStatusLine()
+                    .getStatusCode());
         }
     }
 
@@ -198,8 +194,8 @@ public class ConnectionHandlerTest {
     public void testConnectionError() throws Exception {
         log.info("Testing connection failure");
         whenNew(HttpPost.class).withArguments(RiskScoreConstants.RISK_SCORE_SERVICE_PATH).thenReturn(mockHttpPost);
-
         when(mockHttpClient.execute(Matchers.any(HttpPost.class))).thenThrow(new ConnectException());
+
         try {
             connectionHandler.calculateRiskScore(riskScoreRequestDTO);
             Assert.fail("Risk Calculation failed");

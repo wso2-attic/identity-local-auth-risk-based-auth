@@ -17,6 +17,8 @@
  */
 package org.wso2.carbon.identity.authenticator.risk.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -29,13 +31,14 @@ import org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunction;
 import org.wso2.carbon.identity.authenticator.risk.GetRiskScoreFunctionImpl;
 
 /**
- * Register the java function which calculates the risk of auth requests
+ * Register the java function which calculates the risk of auth requests.
  */
 @Component(
         name = "identity.authenticator.risk.authenticator.risk.function.component",
         immediate = true)
 public class JavascriptFunctionsSupplierComponent {
 
+    private static final Log log = LogFactory.getLog(JavascriptFunctionsSupplierComponent.class);
     private JsFunctionRegistry jsFunctionRegistry;
     private GetRiskScoreFunctionImpl getRiskScoreFunction;
 
@@ -44,12 +47,18 @@ public class JavascriptFunctionsSupplierComponent {
         getRiskScoreFunction = new GetRiskScoreFunctionImpl();
         jsFunctionRegistry.register(JsFunctionRegistry.Subsystem.SEQUENCE_HANDLER, "getRiskScore",
                 (GetRiskScoreFunction) getRiskScoreFunction::getRiskScore);
+        if (log.isDebugEnabled()) {
+            log.debug("Risk calculating bundle successfully activated.");
+        }
     }
 
     @Deactivate
     protected void deactivate(ComponentContext ctxt) {
         if (jsFunctionRegistry != null) {
             jsFunctionRegistry.deRegister(JsFunctionRegistry.Subsystem.SEQUENCE_HANDLER, "getRiskScore");
+            if (log.isDebugEnabled()) {
+                log.debug("Risk calculating component deactivated.");
+            }
         }
     }
 

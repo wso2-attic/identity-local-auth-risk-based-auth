@@ -48,13 +48,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 /**
- * Handle the Http connection
+ * Handle the Http connection.
  */
 public class ConnectionHandler {
     private static final Log log = LogFactory.getLog(ConnectionHandler.class);
 
     /**
-     * Send the authentication request data to the IS analytics and obtain the risk score
+     * Send the authentication request data to the IS analytics and obtain the risk score.
      *
      * @param requestDTO Authentication context
      * @return riskScore riskScore value for the authentication request
@@ -74,14 +74,18 @@ public class ConnectionHandler {
 
         // Building the http client
         CloseableHttpClient httpClient;
+        InputStream inputStream = null;
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-            String pathToKeyStore = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_LOCATION);
-            String password = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_PASSWORD);
-            String type = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants.SECURITY_KEYSTORE_TYPE);
+            String pathToKeyStore = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants
+                    .SECURITY_KEYSTORE_LOCATION);
+            String password = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants
+                    .SECURITY_KEYSTORE_PASSWORD);
+            String type = CarbonUtils.getServerConfiguration().getFirstProperty(RiskScoreConstants
+                    .SECURITY_KEYSTORE_TYPE);
             KeyStore keyStore = KeyStore.getInstance(type);
-            InputStream inputStream = new FileInputStream(pathToKeyStore);
+            inputStream = new FileInputStream(pathToKeyStore);
             keyStore.load(inputStream, password.toCharArray());
             httpClientBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()
                     .loadTrustMaterial(keyStore).build()));
@@ -89,6 +93,14 @@ public class ConnectionHandler {
         } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException |
                 IOException e) {
             throw new RiskScoreCalculationException("Failed to establish a secure connection", e);
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                log.error("Can not shutdown the input stream", e);
+            }
         }
 
         int riskScore;
@@ -118,7 +130,8 @@ public class ConnectionHandler {
     }
 
     /**
-     * Create a entity from a java object
+     * Create a entity from a java object.
+     *
      * @param riskScoreRequestDTO java object for the risk score request
      * @return risk score request converted into a string entity
      * @throws RiskScoreCalculationException exception when the converting fails
@@ -138,7 +151,8 @@ public class ConnectionHandler {
     }
 
     /**
-     * Extract the risk score object from the Http Response
+     * Extract the risk score object from the Http Response.
+     *
      * @param response Http Response containing the risk score
      * @return risk score
      * @throws RiskScoreCalculationException exception when the extraction fails
@@ -156,6 +170,3 @@ public class ConnectionHandler {
         return riskScore;
     }
 }
-
-
-

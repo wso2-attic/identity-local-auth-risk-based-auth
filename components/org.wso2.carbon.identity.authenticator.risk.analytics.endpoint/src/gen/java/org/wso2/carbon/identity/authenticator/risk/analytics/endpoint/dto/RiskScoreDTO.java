@@ -18,21 +18,17 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 
-
 @ApiModel(description = "")
 public class RiskScoreDTO {
 
-
     @NotNull
     private Integer score = 2;
-
 
     /**
      **/
@@ -45,7 +41,6 @@ public class RiskScoreDTO {
     public void setScore(Integer score) {
         this.score = score;
     }
-
 
     @Override
     public String toString() {

@@ -37,7 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * Utility functions for the risk score calculation service
+ * Utility functions for the risk score calculation service.
  */
 public class RiskScoreServiceUtil {
     private static final Log log = LogFactory.getLog(RiskScoreServiceUtil.class);
@@ -104,7 +104,7 @@ public class RiskScoreServiceUtil {
     }
 
     /**
-     * Loads the configuration file in the given path as an OM element
+     * Loads the configuration file in the given path as an OM element.
      *
      * @return OMElement of config file
      * @throws RiskScoreServiceConfigurationException exception in configuring the service
@@ -132,13 +132,13 @@ public class RiskScoreServiceUtil {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                log.error("Can not shutdown the input stream", e);
+                log.error("Can not shutdown the input stream.", e);
             }
         }
     }
 
     /**
-     * Get the path of the configuration file
+     * Get the path of the configuration file.
      */
     private static String getFilePath() {
         String carbonHome = System.getProperty(ServerConstants.CARBON_CONFIG_DIR_PATH);

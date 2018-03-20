@@ -44,13 +44,13 @@ public class RiskScoreStreamConsumer implements WSO2EventConsumer {
 
     /**
      * This method is called upon receiving new events for risk score stream.
-     * Result is added to the corresponding result container
+     * Result is added to the corresponding result container.
      *
      * @param event Resultant event from the IS-Analytics
      */
     public void onEvent(Event event) {
         if (log.isDebugEnabled()) {
-            log.debug("Response is received from IS-Analytics");
+            log.debug("Response is received from IS-Analytics.");
         }
         ResultContainer container = ServiceValueHolder.getInstance().getResultContainerMap()
                 .get(String.valueOf(event.getPayloadData()[0]));
@@ -61,11 +61,11 @@ public class RiskScoreStreamConsumer implements WSO2EventConsumer {
 
     @Override
     public void onAddDefinition(StreamDefinition streamDefinition) {
-        //Do nothing
+        // Do nothing.
     }
 
     @Override
     public void onRemoveDefinition(StreamDefinition streamDefinition) {
-        //Do nothing
+        // Do nothing.
     }
 }

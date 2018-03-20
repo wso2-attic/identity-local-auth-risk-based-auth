@@ -18,7 +18,7 @@
 package org.wso2.carbon.identity.authenticator.risk.exception;
 
 /**
- * Exception occur during the risk score calculation process
+ * Exception occur during the risk score calculation process.
  */
 public class RiskScoreCalculationException extends Exception {
 

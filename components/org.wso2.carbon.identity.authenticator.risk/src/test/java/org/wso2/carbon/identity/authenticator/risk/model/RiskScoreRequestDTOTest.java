@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
- * Test Risk Score Request object functions
+ * Test Risk Score Request object functions.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({RiskScoreRequestDTO.class, IdentityUtil.class, EntityUtils.class})
@@ -63,7 +63,6 @@ public class RiskScoreRequestDTOTest {
     public IObjectFactory getObjectFactory() {
         return new PowerMockObjectFactory();
     }
-
 
     @BeforeMethod
     public void setup() {
@@ -89,7 +88,6 @@ public class RiskScoreRequestDTOTest {
         when(authenticationContext.isPassiveAuthenticate()).thenReturn(false);
         when(authenticationContext.getCurrentAuthenticator()).thenReturn("step");
     }
-
 
     @Test
     public void testGettersAndSetters() throws IOException {

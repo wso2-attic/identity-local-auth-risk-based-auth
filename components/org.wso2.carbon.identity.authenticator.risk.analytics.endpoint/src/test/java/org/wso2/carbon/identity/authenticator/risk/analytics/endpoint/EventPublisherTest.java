@@ -42,7 +42,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
- * Test the Event Publisher Class
+ * Test the Event Publisher Class.
  */
 
 @RunWith(PowerMockRunner.class)

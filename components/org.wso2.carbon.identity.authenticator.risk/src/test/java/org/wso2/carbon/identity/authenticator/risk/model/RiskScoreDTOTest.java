@@ -21,7 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test Risk Score DTO functions
+ * Test Risk Score DTO functions.
  */
 public class RiskScoreDTOTest {
 
@@ -37,6 +37,4 @@ public class RiskScoreDTOTest {
         riskScoreDTO.setScore(4);
         Assert.assertEquals(riskScoreDTO.getScore(), 4);
     }
-
-
 }

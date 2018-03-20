@@ -23,7 +23,7 @@ import org.wso2.carbon.identity.core.util.IdentityUtil;
 import java.util.Map;
 
 /**
- * Contains java object for risk score request
+ * Contains java object for risk score request.
  */
 public class RiskScoreRequestDTO {
     private String username;
@@ -39,7 +39,6 @@ public class RiskScoreRequestDTO {
     private String identityProvider;
     private String stepAuthenticator;
     private Map<String, String> propertyMap;
-
 
     public RiskScoreRequestDTO() {
     }

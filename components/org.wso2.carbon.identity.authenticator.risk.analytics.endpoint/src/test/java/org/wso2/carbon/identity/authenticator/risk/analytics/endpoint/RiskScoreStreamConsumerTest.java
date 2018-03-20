@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Tests RiskScoreConsumer class
+ * Tests RiskScoreConsumer class.
  */
 
 @RunWith(PowerMockRunner.class)

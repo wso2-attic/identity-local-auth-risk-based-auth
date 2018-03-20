@@ -30,15 +30,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Path("/calculate")
-
-
 @io.swagger.annotations.Api(value = "/calculate", description = "the calculate API")
 public class CalculateApi {
 
     private final CalculateApiService delegate = CalculateApiServiceFactory.getCalculateApi();
 
     @POST
-
     @Consumes({"application/json"})
     @Produces({"application/json"})
     @io.swagger.annotations.ApiOperation(value = "", notes = "Method to obtain the calculated risk score an " +
@@ -51,4 +48,3 @@ public class CalculateApi {
         return delegate.calculateRiskScore(authRequest);
     }
 }
-

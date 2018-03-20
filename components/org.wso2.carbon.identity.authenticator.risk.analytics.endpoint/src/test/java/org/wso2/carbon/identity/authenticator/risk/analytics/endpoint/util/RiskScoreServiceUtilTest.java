@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.util;
 
-
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -34,6 +33,7 @@ import org.wso2.carbon.utils.ServerConstants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -44,7 +44,7 @@ import javax.xml.transform.stream.StreamResult;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Test RiskScore Service Util class
+ * Test RiskScore Service Util class.
  */
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"javax.xml.stream.XMLInputFactory", "javax.xml.transform.Transformer"})
@@ -56,7 +56,7 @@ public class RiskScoreServiceUtilTest {
     public void setUp() {
         initMocks(this);
         ClassLoader classLoader = getClass().getClassLoader();
-        String path = classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML).getPath();
+        String path = Objects.requireNonNull(classLoader.getResource(Constants.RISK_CALCULATOR_CONFIG_XML)).getPath();
         int index = path.lastIndexOf(File.separator);
         pathToConfigFileLocation = path.substring(0, index);
     }

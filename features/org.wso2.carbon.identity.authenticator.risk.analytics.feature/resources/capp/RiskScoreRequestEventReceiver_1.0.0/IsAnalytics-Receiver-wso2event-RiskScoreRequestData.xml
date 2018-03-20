@@ -26,4 +26,3 @@
     <to streamName="org.wso2.is.analytics.stream.RiskScoreRequest" version="1.0.0"/>
 
 </eventReceiver>
-

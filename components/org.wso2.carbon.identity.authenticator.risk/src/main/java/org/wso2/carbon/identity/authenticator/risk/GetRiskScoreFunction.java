@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Functional interface of GetRiskScoreFunction
+ * Functional interface of GetRiskScoreFunction.
  */
 @FunctionalInterface
 public interface GetRiskScoreFunction {

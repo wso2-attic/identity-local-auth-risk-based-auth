@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.authenticator.risk.analytics.endpoint.exception;
 
+/**
+ * Exceptions that may occur during the configuring the Risk Score Service.
+ */
 public class RiskScoreServiceConfigurationException extends Exception {
 
     public RiskScoreServiceConfigurationException(String message) {
@@ -27,5 +30,4 @@ public class RiskScoreServiceConfigurationException extends Exception {
     public RiskScoreServiceConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

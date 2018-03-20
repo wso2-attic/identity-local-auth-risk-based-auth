@@ -18,7 +18,7 @@
 package org.wso2.carbon.identity.authenticator.risk.util;
 
 /**
- * Contains the constants required for the Adaptive Authentication
+ * Contains the constants required for the Adaptive Authentication.
  */
 public class RiskScoreConstants {
     public static final String RISK_SCORE_SERVICE_PATH = "/api/authentication/adaptive/risk/calculate";
@@ -28,5 +28,4 @@ public class RiskScoreConstants {
     public static final String SECURITY_KEYSTORE_TYPE = "Security.KeyStore.Type";
     public static final String ANALYTICS_DAS_SERVER_URL = "Analytics.DASServerURL";
     public static final String ANALYTICS_ENABLED = "Analytics.Enabled";
-
 }
