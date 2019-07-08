@@ -1,0 +1,16 @@
+{
+  "name": "org.wso2.is.analytics.stream.RiskScorePerRule",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "eventId",
+      "type": "STRING"
+    },
+    {
+      "name": "riskscore",
+      "type": "INT"
+    }
+  ]
+}
