@@ -416,7 +416,7 @@
         <cxf-version>2.7.13</cxf-version>
         <apache.felix.scr.ds.annotations.version>1.2.8</apache.felix.scr.ds.annotations.version>
         <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.13.1</junit.version>
         <cxf-bundle.wso2.version>2.6.1.wso2v2</cxf-bundle.wso2.version>
         <log4j.version>1.2.13</log4j.version>
         <org.apache.httpcomponents.version>4.1.1</org.apache.httpcomponents.version>
