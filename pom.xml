@@ -419,7 +419,7 @@
         <junit.version>4.11</junit.version>
         <cxf-bundle.wso2.version>2.6.1.wso2v2</cxf-bundle.wso2.version>
         <log4j.version>1.2.13</log4j.version>
-        <org.apache.httpcomponents.version>4.1.1</org.apache.httpcomponents.version>
+        <org.apache.httpcomponents.version>4.5.13</org.apache.httpcomponents.version>
         <com.fasterxml.jackson.version>2.6.0</com.fasterxml.jackson.version>
         <codehaus.jackson.version>1.8.6</codehaus.jackson.version>
         <org.apache.cxf.version>3.1.6</org.apache.cxf.version>
